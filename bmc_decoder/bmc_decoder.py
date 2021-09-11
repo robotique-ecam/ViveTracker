@@ -125,20 +125,12 @@ class BMC_decoder:
         string += "\n"
         return string
 
-for low_state in indexes_0_channel_0:
-    potential_bmc = []
-    state = low_state[0]
-    nb_of_period = ( df["Time [s]"][low_state[1]] - df["Time [s]"][low_state[0]] ) / period
-    #print(f"nb of period in this low_state: {nb_of_period}")
+#csv_doc = "../data/12MHz_100ms"
+csv_doc = "test"
 
-    ts = df["Time [s]"][low_state[0]] + 1e-8
-    while ts < df["Time [s]"][low_state[1]]:
-        potential_bmc.append(df["Channel 1"][state])
-        ts += period
-        if ts > df["Time [s]"][state+1]:
-            state += 1
-    #print(potential_bmc)
+bmc_decoder = BMC_decoder(csv_doc)
+bmc_decoder.envelope_0_finder()
+bmc_decoder.periodic_filler()
+bmc_decoder.get_valid_bmc_indexes()
 
-    validity_indexes = []
-    bmc_validity(potential_bmc, validity_indexes)
-    print(validity_indexes)
+print(bmc_decoder)
