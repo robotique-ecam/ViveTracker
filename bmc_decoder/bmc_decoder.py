@@ -67,27 +67,43 @@ class BMC_decoder:
                     
             self.potential_bmcs.append(potential_bmc)
 
-    for i in range(len(pot_bmc) - 2):
-        if not skip:
-            if not start:
-                if pot_bmc[i] == pot_bmc[i+1]:
-                    validity_indexes.append([i])
-                    start = True
-                    skip = True
-            else:
-                if pot_bmc[i+1] == pot_bmc[i+2]:
-                    if i-1 - validity_indexes[-1][0] < 17*2:
-                        validity_indexes.pop(-1)
-                    else:
-                        validity_indexes[-1].append(i-1)
-                    start = False
-                else:
-                    skip = True
-        else:
-            skip = False
-    if len(validity_indexes[-1]) == 1:
-        validity_indexes.pop(-1)
+    def get_valid_bmc_indexes(self):
+        """Looking for bmc validity through each element of self.potential_bmcs.
+        Store valid interval indexes into self.bmc_beams_indexes"""
 
+        self.bmc_beams_indexes = []
+
+        for pot_bmc in self.potential_bmcs:
+            validity_indexes = []
+            start = False
+            skip = False
+
+            for i in range(len(pot_bmc) - 2):
+                if not skip:
+                    if not start:
+                        if pot_bmc[i] == pot_bmc[i+1]:
+                            validity_indexes.append([i])
+                            start = True
+                            skip = True
+                    else:
+                        if pot_bmc[i+1] == pot_bmc[i+2]:
+                            if i-1 - validity_indexes[-1][0] < self.min_bit_required*2:
+                                validity_indexes.pop(-1)
+                            else:
+                                validity_indexes[-1].append(i-1)
+                            start = False
+                        else:
+                            skip = True
+                else:
+                    skip = False
+
+            if len(validity_indexes[-1]) == 1:
+                if len(pot_bmc) - validity_indexes[-1][0] > self.min_bit_required*2:
+                    validity_indexes[-1].append(len(pot_bmc))
+                else:
+                    validity_indexes.pop(-1)
+
+            self.bmc_beams_indexes.append(validity_indexes)
 
 for i in range(len(df["Channel 0"])):
     channel_0_state = df["Channel 0"][i]
