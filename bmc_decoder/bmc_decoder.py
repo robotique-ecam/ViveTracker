@@ -9,11 +9,12 @@ import numpy as np
 
 from copy import deepcopy
 
-freq = 12e6
-#csv_doc = "../data/12MHz_100ms"
-csv_doc = "test"
+class SingleBeamBMC:
+    """Single Beam Biphase Mark Code class storing data of valid bmc for this beam """
 
-period = 1/freq
+    def __init__(self, periodic_waveform: list, start_timestamp: np.float64):
+        self.values = periodic_waveform
+        self.start_timestamp = start_timestamp
 
 class BMC_decoder:
     """Biphase Mark Code decoder class from data extracted from Logic 2 software."""
