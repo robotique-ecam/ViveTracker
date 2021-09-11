@@ -16,6 +16,31 @@ tmp_list_storing_low_state = []
 
 previous_channel_0_state = df["Channel 0"][0]
 
+def bmc_validity(pot_bmc: list, validity_indexes: list):
+    start = False
+    skip = False
+    for i in range(len(pot_bmc) - 2):
+        if not skip:
+            if not start:
+                if pot_bmc[i] == pot_bmc[i+1]:
+                    validity_indexes.append([i])
+                    start = True
+                    skip = True
+            else:
+                if pot_bmc[i+1] == pot_bmc[i+2]:
+                    if i-1 - validity_indexes[-1][0] < 17*2:
+                        validity_indexes.pop(-1)
+                    else:
+                        validity_indexes[-1].append(i-1)
+                    start = False
+                else:
+                    skip = True
+        else:
+            skip = False
+    if len(validity_indexes[-1]) == 1:
+        validity_indexes.pop(-1)
+
+
 for i in range(len(df["Channel 0"])):
     channel_0_state = df["Channel 0"][i]
     if channel_0_state != previous_channel_0_state:
@@ -41,3 +66,7 @@ for low_state in indexes_0_channel_0:
         if ts > df["Time [s]"][state+1]:
             state += 1
     #print(potential_bmc)
+
+    validity_indexes = []
+    bmc_validity(potential_bmc, validity_indexes)
+    print(validity_indexes)
