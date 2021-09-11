@@ -47,6 +47,26 @@ class BMC_decoder:
                     
             previous_envelope_state = envelope_state
 
+    def periodic_filler(self):
+        """Function filling an array periodically based instead of state changement based"""
+
+        self.potential_bmcs = []
+
+        for borders_indexes in self.indexes_0_envelope:
+            potential_bmc = []
+            state_index = borders_indexes[0]
+            ts = self.time_column[borders_indexes[0]] + 1e-8 #adding 10ns to be sure to fall into an established new state (each state is 83ns at 12MHz)
+            # Note: the time deviation between captures isn't high enough to interfere with the period in this algorithm
+
+            while ts < self.time_column[borders_indexes[1]]:
+                potential_bmc.append(self.data_column[state_index])
+                ts += self.period
+
+                if ts > self.time_column[state_index+1]:
+                    state_index += 1
+                    
+            self.potential_bmcs.append(potential_bmc)
+
     for i in range(len(pot_bmc) - 2):
         if not skip:
             if not start:
