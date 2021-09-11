@@ -105,17 +105,25 @@ class BMC_decoder:
 
             self.bmc_beams_indexes.append(validity_indexes)
 
-for i in range(len(df["Channel 0"])):
-    channel_0_state = df["Channel 0"][i]
-    if channel_0_state != previous_channel_0_state:
-        tmp_list_storing_low_state.append(i)
-        if channel_0_state == 1:
-            indexes_0_channel_0.append(deepcopy(tmp_list_storing_low_state))
-            tmp_list_storing_low_state.clear()
-        print(i)
-    previous_channel_0_state = channel_0_state
+    def __str__(self):
+        string = "BMC decoder:\n"
 
-print(indexes_0_channel_0)
+        if hasattr(self, 'indexes_0_envelope'):
+            string += "\nindexes of envelope at low state ([start, end]):\n"
+            for i in range(len(self.indexes_0_envelope)):
+                string += f"\tBeam n°{i}: "
+                string += str(self.indexes_0_envelope[i])
+                string += "\n"
+
+        if hasattr(self, 'bmc_beams_indexes'):
+            string += "\nindexes of valid bmc interval found per beam:\n"
+            for i in range(len(self.bmc_beams_indexes)):
+                string += f"\tBeam n°{i}: "
+                string += str(self.bmc_beams_indexes[i])
+                string += "\n"
+
+        string += "\n"
+        return string
 
 for low_state in indexes_0_channel_0:
     potential_bmc = []
