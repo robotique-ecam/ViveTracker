@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+
+""" BMC decoder package """
+
+
 import pandas as pd
 import numpy as np
 
@@ -9,10 +15,16 @@ csv_doc = "test"
 
 period = 1/freq
 
-df = pd.read_csv(f"{csv_doc}.csv", dtype={"Time [s]": np.float64})
+class BMC_decoder:
+    """Biphase Mark Code decoder class from data extracted from Logic 2 software."""
 
-indexes_0_channel_0 = []
-tmp_list_storing_low_state = []
+    def __init__(self, csv_path: str):
+        self.period = 1/(12e6)
+        self.min_bit_required = 17
+        self.df = pd.read_csv(f"{csv_path}.csv", dtype={"Time [s]": np.float64})
+        self.time_column = self.df["Time [s]"]
+        self.envelope_column = self.df["Channel 0"]
+        self.data_column = self.df["Channel 1"]
 
 previous_channel_0_state = df["Channel 0"][0]
 
