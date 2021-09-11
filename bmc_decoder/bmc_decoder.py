@@ -26,11 +26,27 @@ class BMC_decoder:
         self.envelope_column = self.df["Channel 0"]
         self.data_column = self.df["Channel 1"]
 
-previous_channel_0_state = df["Channel 0"][0]
+    def envelope_0_finder(self):
+        """Function extracting indexes of the dataframe in which "envelope" (Channel 0) is 0 
+        storing array of array of indexes in self.indexes_0_envelope, ex: 
+        [[start_index_0, end_index_0], [start_index_1, end_index_1], [start_index_2, end_index_2]]"""
+        
+        self.indexes_0_envelope = []
+        tmp_list_storing_low_state = []
+        previous_envelope_state = self.envelope_column[0]
+        
+        for i in range(len(self.envelope_column)):
+            envelope_state = self.envelope_column[i]
 
-def bmc_validity(pot_bmc: list, validity_indexes: list):
-    start = False
-    skip = False
+            if envelope_state != previous_envelope_state:
+                tmp_list_storing_low_state.append(i)
+
+                if envelope_state == 1:
+                    self.indexes_0_envelope.append(deepcopy(tmp_list_storing_low_state))
+                    tmp_list_storing_low_state.clear()
+                    
+            previous_envelope_state = envelope_state
+
     for i in range(len(pot_bmc) - 2):
         if not skip:
             if not start:
