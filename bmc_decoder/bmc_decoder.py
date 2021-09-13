@@ -106,6 +106,31 @@ class BMC_decoder:
 
             self.bmc_beams_indexes.append(validity_indexes)
 
+    def decode_bmc(self):
+        """Decode self.potential_bmcs considering indexes given by self.bmc_beams_indexes
+        decoding algorithm: goes through the self.potential_bmcs[single_beam_bmc_indexes] list by a step of 2
+        checks the value of the next index: if it's the same value, the decoded value is 0, else 1"""
+
+        self.decoded_bmc = []
+
+        for single_beam_bmc_indexes in range(len(self.bmc_beams_indexes)):
+            single_beam_decoded_bmc = []
+
+            for bmc_beam_index in self.bmc_beams_indexes[single_beam_bmc_indexes]:
+                bmc_decoded = []
+
+                for i in range(bmc_beam_index[0]+1, bmc_beam_index[1], 2):
+                    potential_bmc_this_beam = bmc_decoder.potential_bmcs[single_beam_bmc_indexes]
+
+                    if potential_bmc_this_beam[i] == potential_bmc_this_beam[i-1]: #not i+1 to avoid "out of range"
+                        bmc_decoded.append(0)
+                    else:
+                        bmc_decoded.append(1)
+
+                single_beam_decoded_bmc.append(bmc_decoded)
+
+            self.decoded_bmc.append(single_beam_decoded_bmc)
+                
     def __str__(self):
         string = "BMC decoder:\n"
 
@@ -123,6 +148,9 @@ class BMC_decoder:
                 string += str(self.bmc_beams_indexes[i])
                 string += "\n"
 
+        if hasattr(self, 'decoded_bmc'):
+            string += "\nDecoded Biphase Mark Code availible in object.decoded_bmc list\n"
+
         string += "\n"
         return string
 
@@ -133,5 +161,6 @@ bmc_decoder = BMC_decoder(csv_doc)
 bmc_decoder.envelope_0_finder()
 bmc_decoder.periodic_filler()
 bmc_decoder.get_valid_bmc_indexes()
+bmc_decoder.decode_bmc()
 
 print(bmc_decoder)
