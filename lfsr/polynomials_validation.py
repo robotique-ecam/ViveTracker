@@ -16,6 +16,8 @@ class SameValue:
             return True
         return False
 
+    def __str__(self) -> str:
+        return f"{self.value} at index {self.indexes[0]} and {self.indexes[1]}"
 
 lfsr = LFSR(polynomial_to_analysis)
 pos = [1]
@@ -42,3 +44,21 @@ for i in range(len(pos)):
                 same_values.append(potential_same_value)
                 print(f"Same value detected: " + str(potential_same_value))
 
+
+to_print = "Same value of polynomial " + hex(polynomial_to_analysis) + ":\n"
+for i in same_values:
+    to_print += str(i) + '\n'
+
+print(to_print)
+
+"""
+Results:
+
+Same value of polynomial 0x1D258:
+1 at index 0 and 131071
+2 at index 1 and 131072
+
+Same value of polynomial 0x17e04:
+1 at index 0 and 131071
+2 at index 1 and 131072
+"""
