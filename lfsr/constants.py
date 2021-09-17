@@ -1,3 +1,8 @@
+"""
+Polynomials used in all base station 2.0
+2 polynomials for 1 mode/channel ex: if you identifiate polynomial at index polys[1] it means that your base station is in mode 1
+generalization: channel of the base station = int(nPoly / 2) + 1 (nPoly = index of the polys you identifiate)
+"""
 polys = [
     0x0001D258, 0x00017E04,
     0x0001FF6B, 0x00013F67,
