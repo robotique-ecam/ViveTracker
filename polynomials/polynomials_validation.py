@@ -1,8 +1,11 @@
-from lfsr import LFSR
-from constants import polys
+import sys
+sys.path.append('../')
+
+from lfsr.lfsr import LFSR
+from lfsr.constants import polys
 from datetime import datetime
 
-polynomial_to_analysis = polys[0]
+polynomial_to_analysis = polys[3]
 
 class SameValue:
     def __init__(self, value, index1, index2) -> None:
@@ -54,11 +57,47 @@ print(to_print)
 """
 Results:
 
-Same value of polynomial 0x1D258:
-1 at index 0 and 131071
-2 at index 1 and 131072
+Mode 1:
+    Same value of polynomial 0x1D258:
+        1 at index 0 and 131071
+        2 at index 1 and 131072
 
-Same value of polynomial 0x17e04:
-1 at index 0 and 131071
-2 at index 1 and 131072
+    Same value of polynomial 0x17e04:
+        1 at index 0 and 131071
+        2 at index 1 and 131072
+
+
+Mode2:
+    Same value of polynomial 0x1ff6b:
+        1 at index 0 and 131071
+        3 at index 1 and 131072
+
+
+Mode3:
+
+Mode4:
+
+Mode5:
+
+Mode6:
+
+Mode7:
+
+Mode8:
+
+Mode9:
+
+Mode10:
+
+Mode11:
+
+Mode12:
+
+Mode13:
+
+Mode14:
+
+Mode15:
+
+Mode16:
 """
