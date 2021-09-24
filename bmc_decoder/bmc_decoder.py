@@ -9,18 +9,20 @@ import numpy as np
 
 from copy import deepcopy
 
+
 class SingleBeamBMC:
-    """Single Beam Biphase Mark Code class storing data of valid bmc for this beam """
+    """Single Beam Biphase Mark Code class storing data of valid bmc for this beam"""
 
     def __init__(self, periodic_waveform: list, start_timestamp: np.float64):
         self.values = periodic_waveform
         self.start_timestamp = start_timestamp
 
+
 class BMC_decoder:
     """Biphase Mark Code decoder class from data extracted from Logic 2 software."""
 
     def __init__(self, csv_path: str):
-        self.period = 1/(12e6)
+        self.period = 1 / (12e6)
         self.min_bit_required = 17
         self.df = pd.read_csv(f"{csv_path}.csv", dtype={"Time [s]": np.float64})
         self.time_column = self.df["Time [s]"]
@@ -28,14 +30,14 @@ class BMC_decoder:
         self.data_column = self.df["Channel 1"]
 
     def envelope_0_finder(self):
-        """Function extracting indexes of the dataframe in which "envelope" (Channel 0) is 0 
-        storing array of array of indexes in self.indexes_0_envelope, ex: 
+        """Function extracting indexes of the dataframe in which "envelope" (Channel 0) is 0
+        storing array of array of indexes in self.indexes_0_envelope, ex:
         [[start_index_0, end_index_0], [start_index_1, end_index_1], [start_index_2, end_index_2]]"""
-        
+
         self.indexes_0_envelope = []
         tmp_list_storing_low_state = []
         previous_envelope_state = self.envelope_column[0]
-        
+
         for i in range(len(self.envelope_column)):
             envelope_state = self.envelope_column[i]
 
@@ -45,7 +47,7 @@ class BMC_decoder:
                 if envelope_state == 1:
                     self.indexes_0_envelope.append(deepcopy(tmp_list_storing_low_state))
                     tmp_list_storing_low_state.clear()
-                    
+
             previous_envelope_state = envelope_state
 
     def periodic_filler(self):
@@ -56,16 +58,18 @@ class BMC_decoder:
         for borders_indexes in self.indexes_0_envelope:
             potential_bmc = []
             state_index = borders_indexes[0]
-            ts = self.time_column[borders_indexes[0]] + 1e-8 #adding 10ns to be sure to fall into an established new state (each state is 83ns at 12MHz)
+            ts = (
+                self.time_column[borders_indexes[0]] + 1e-8
+            )  # adding 10ns to be sure to fall into an established new state (each state is 83ns at 12MHz)
             # Note: the time deviation between captures isn't high enough to interfere with the period in this algorithm
 
             while ts < self.time_column[borders_indexes[1]]:
                 potential_bmc.append(self.data_column[state_index])
                 ts += self.period
 
-                if ts > self.time_column[state_index+1]:
+                if ts > self.time_column[state_index + 1]:
                     state_index += 1
-                    
+
             self.potential_bmcs.append(potential_bmc)
 
     def get_valid_bmc_indexes(self):
@@ -82,16 +86,19 @@ class BMC_decoder:
             for i in range(len(pot_bmc) - 2):
                 if not skip:
                     if not start:
-                        if pot_bmc[i] == pot_bmc[i+1]:
+                        if pot_bmc[i] == pot_bmc[i + 1]:
                             validity_indexes.append([i])
                             start = True
                             skip = True
                     else:
-                        if pot_bmc[i+1] == pot_bmc[i+2]:
-                            if i-1 - validity_indexes[-1][0] < self.min_bit_required*2:
+                        if pot_bmc[i + 1] == pot_bmc[i + 2]:
+                            if (
+                                i - 1 - validity_indexes[-1][0]
+                                < self.min_bit_required * 2
+                            ):
                                 validity_indexes.pop(-1)
                             else:
-                                validity_indexes[-1].append(i-1)
+                                validity_indexes[-1].append(i - 1)
                             start = False
                         else:
                             skip = True
@@ -99,7 +106,7 @@ class BMC_decoder:
                     skip = False
 
             if len(validity_indexes[-1]) == 1:
-                if len(pot_bmc) - validity_indexes[-1][0] > self.min_bit_required*2:
+                if len(pot_bmc) - validity_indexes[-1][0] > self.min_bit_required * 2:
                     validity_indexes[-1].append(len(pot_bmc))
                 else:
                     validity_indexes.pop(-1)
@@ -119,10 +126,14 @@ class BMC_decoder:
             for bmc_beam_index in self.bmc_beams_indexes[single_beam_bmc_indexes]:
                 bmc_decoded = []
 
-                for i in range(bmc_beam_index[0]+1, bmc_beam_index[1], 2):
-                    potential_bmc_this_beam = bmc_decoder.potential_bmcs[single_beam_bmc_indexes]
+                for i in range(bmc_beam_index[0] + 1, bmc_beam_index[1], 2):
+                    potential_bmc_this_beam = bmc_decoder.potential_bmcs[
+                        single_beam_bmc_indexes
+                    ]
 
-                    if potential_bmc_this_beam[i] == potential_bmc_this_beam[i-1]: #not i+1 to avoid "out of range"
+                    if (
+                        potential_bmc_this_beam[i] == potential_bmc_this_beam[i - 1]
+                    ):  # not i+1 to avoid "out of range"
                         bmc_decoded.append(0)
                     else:
                         bmc_decoded.append(1)
@@ -130,31 +141,34 @@ class BMC_decoder:
                 single_beam_decoded_bmc.append(bmc_decoded)
 
             self.decoded_bmc.append(single_beam_decoded_bmc)
-                
+
     def __str__(self):
         string = "BMC decoder:\n"
 
-        if hasattr(self, 'indexes_0_envelope'):
+        if hasattr(self, "indexes_0_envelope"):
             string += "\nindexes of envelope at low state ([start, end]):\n"
             for i in range(len(self.indexes_0_envelope)):
                 string += f"\tBeam n°{i}: "
                 string += str(self.indexes_0_envelope[i])
                 string += "\n"
 
-        if hasattr(self, 'bmc_beams_indexes'):
+        if hasattr(self, "bmc_beams_indexes"):
             string += "\nindexes of valid bmc interval found per beam:\n"
             for i in range(len(self.bmc_beams_indexes)):
                 string += f"\tBeam n°{i}: "
                 string += str(self.bmc_beams_indexes[i])
                 string += "\n"
 
-        if hasattr(self, 'decoded_bmc'):
-            string += "\nDecoded Biphase Mark Code availible in object.decoded_bmc list\n"
+        if hasattr(self, "decoded_bmc"):
+            string += (
+                "\nDecoded Biphase Mark Code availible in object.decoded_bmc list\n"
+            )
 
         string += "\n"
         return string
 
-#csv_doc = "../data/12MHz_100ms"
+
+# csv_doc = "../data/12MHz_100ms"
 csv_doc = "test"
 
 bmc_decoder = BMC_decoder(csv_doc)
