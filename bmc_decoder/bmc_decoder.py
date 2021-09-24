@@ -3,11 +3,15 @@
 
 """ BMC decoder package """
 
+import sys
+
+sys.path.append("../")
 
 import pandas as pd
 import numpy as np
 
 from copy import deepcopy
+from lfsr.constants import bmc_period
 
 
 class SingleWord:
@@ -23,6 +27,12 @@ class SingleWord:
         for i in range(len(self.waveform)):
             data = (self.waveform[-1 - i] << i) | data
         return data
+
+    def __str__(self) -> str:
+        string = f"waveform: {self.waveform}\n"
+        string += f"start_timestamp {self.start_timestamp}\n"
+        string += f"data:\n\t binary -> {bin(self.data)},\n\t hex -> {hex(self.data)},\n\t int -> {self.data}\n"
+        return string
 
 
 class SingleBeamBMC:
