@@ -127,7 +127,7 @@ class BMC_decoder:
                 bmc_decoded = []
 
                 for i in range(bmc_beam_index[0] + 1, bmc_beam_index[1], 2):
-                    potential_bmc_this_beam = bmc_decoder.potential_bmcs[
+                    potential_bmc_this_beam = self.potential_bmcs[
                         single_beam_bmc_indexes
                     ]
 
@@ -167,14 +167,10 @@ class BMC_decoder:
         string += "\n"
         return string
 
+    def decode_whole_document(self):
+        """Call all functions in order to get the decoded object state"""
 
-# csv_doc = "../data/12MHz_100ms"
-csv_doc = "test"
-
-bmc_decoder = BMC_decoder(csv_doc)
-bmc_decoder.envelope_0_finder()
-bmc_decoder.periodic_filler()
-bmc_decoder.get_valid_bmc_indexes()
-bmc_decoder.decode_bmc()
-
-print(bmc_decoder)
+        self.envelope_0_finder()
+        self.periodic_filler()
+        self.get_valid_bmc_indexes()
+        self.decode_bmc()
