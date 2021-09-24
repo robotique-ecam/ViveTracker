@@ -10,6 +10,21 @@ import numpy as np
 from copy import deepcopy
 
 
+class SingleWord:
+    def __init__(self, waveform: list, start_timestamp: np.float64) -> None:
+        if len(waveform) != 17:
+            raise Exception("Illegal word size (!= 17)")
+        self.waveform = waveform
+        self.start_timestamp = start_timestamp
+        self.data = self.__get_value_from_waveform()
+
+    def __get_value_from_waveform(self) -> int:
+        data = 0
+        for i in range(len(self.waveform)):
+            data = (self.waveform[-1 - i] << i) | data
+        return data
+
+
 class SingleBeamBMC:
     """Single Beam Biphase Mark Code class storing data of valid bmc for this beam"""
 
