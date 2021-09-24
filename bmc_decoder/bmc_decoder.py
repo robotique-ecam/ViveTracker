@@ -199,3 +199,31 @@ class BMC_decoder:
         self.periodic_filler()
         self.get_valid_bmc_indexes()
         self.decode_bmc()
+
+    def get_timestamp_from_index(
+        self, beam: int, index: int, first_word: bool
+    ) -> np.float64:
+        return (
+            self.time_column[self.indexes_0_envelope[beam][0]]
+            + (
+                index
+                + (self.min_bit_required if first_word else -self.min_bit_required)
+            )
+            * bmc_period
+        )
+
+    def get_first_and_last_word_from_beam(self, beam: int) -> list[SingleWord]:
+        return [
+            SingleWord(
+                self.decoded_bmc[beam][0][:17],
+                self.get_timestamp_from_index(
+                    beam, self.bmc_beams_indexes[beam][0][0], True
+                ),
+            ),
+            SingleWord(
+                self.decoded_bmc[beam][-1][-17:],
+                self.get_timestamp_from_index(
+                    beam, self.bmc_beams_indexes[beam][-1][-1], False
+                ),
+            ),
+        ]
