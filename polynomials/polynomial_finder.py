@@ -45,6 +45,7 @@ class SynthetizedBeamsAnalyzed:
     def __init__(self) -> None:
         self.cleanAnalyzedBeams = []
         self.messyAnalyzedBeams = []
+        self.polynomials_used = {}
 
     def __number_of_beam(self) -> int:
         return len(self.cleanAnalyzedBeams) + len(self.messyAnalyzedBeams)
@@ -56,7 +57,17 @@ class SynthetizedBeamsAnalyzed:
             if beam.is_messy():
                 self.messyAnalyzedBeams.append(beam)
             else:
+                if hex(beam.polynomial) in self.polynomials_used:
+                    self.polynomials_used[hex(beam.polynomial)] += 1
+                else:
+                    self.polynomials_used[hex(beam.polynomial)] = 1
                 self.cleanAnalyzedBeams.append(beam)
+
+    def save_synthesis(self, path: str) -> None:
+        text_file = open(path, "w")
+        text_file.write(self.__str__())
+        text_file.close()
+        print(f"Synthesis saved in {path}")
 
     def __str__(self) -> str:
         string = ""
@@ -68,6 +79,14 @@ class SynthetizedBeamsAnalyzed:
             string += "Messy analysed beam\n"
             for i in self.messyAnalyzedBeams:
                 string += str(i)
+        if hasattr(self, "polynomials_used"):
+            string += "\nPolynomials used:\n"
+            for key in self.polynomials_used.keys():
+                string += f"\t-Polynomial: {key}, number of time found: {self.polynomials_used[key]}\n"
+        number_of_sweeps = self.__number_of_beam()
+        string += f"\nNumber of sweep: {number_of_sweeps}:\n"
+        string += f"\tNumber of sweep fully analyzed: {len(self.cleanAnalyzedBeams)}, ({round((len(self.cleanAnalyzedBeams)/number_of_sweeps)*100)}%):\n"
+        string += f"\tNumber of sweep not clean for analysis: {len(self.messyAnalyzedBeams)}, ({round((len(self.messyAnalyzedBeams)/number_of_sweeps)*100)}%):\n"
         return string
 
 
