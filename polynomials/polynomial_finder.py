@@ -76,7 +76,7 @@ class PolynomialIdentifier:
         self.w_1 = first_word
         self.w_2 = second_word
         self.iteration_estimation = self.__iteration_estimator()
-        print(f"estimated number of iteration {self.iteration_estimation}")
+        # print(f"\nestimated number of iteration {self.iteration_estimation}\n")
 
     def __find_diff_timestamp(self) -> np.float64:
         return abs(self.w_1.start_timestamp - self.w_2.start_timestamp)
@@ -123,8 +123,13 @@ bmc_decoder = BMC_decoder("../data/12MHz_100ms")
 bmc_decoder.decode_whole_document()
 
 print(bmc_decoder)
+
+synthesis = SynthetizedBeamsAnalyzed()
+
 for i in range(len(bmc_decoder.indexes_0_envelope)):
     words = bmc_decoder.get_first_and_last_word_from_beam(i)
 
     polynomial_identifier1 = PolynomialIdentifier(words[0], words[1])
-    polynomial_identifier1.search_polynomial()
+    synthesis.add_beam(polynomial_identifier1.search_polynomial())
+
+print(synthesis)
