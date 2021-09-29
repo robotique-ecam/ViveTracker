@@ -137,10 +137,8 @@ class PolynomialIdentifier:
         return found_polys
 
 
-bmc_decoder = BMC_decoder("../data/12MHz_100ms")
+bmc_decoder = BMC_decoder("../data/12MHz_2000ms")
 bmc_decoder.decode_whole_document()
-
-print(bmc_decoder)
 
 synthesis = SynthetizedBeamsAnalyzed()
 
@@ -150,4 +148,4 @@ for i in range(len(bmc_decoder.indexes_0_envelope)):
         polynomial_identifier1 = PolynomialIdentifier(words[0], words[1])
         synthesis.add_beam(polynomial_identifier1.search_polynomial())
 
-print(synthesis)
+synthesis.save_synthesis("synthesis.txt")
