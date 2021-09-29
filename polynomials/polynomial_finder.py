@@ -93,7 +93,7 @@ class PolynomialIdentifier:
         )
         return [LFSR(poly, initial_LFSR_value) for poly in polys]
 
-    def search_polynomial(self) -> list[int]:
+    def search_polynomial(self) -> list[BeamAnalyzed]:
         found_polys = []
         lfsrs = self.__init_LFSRs()
         final_LFSR_value = (
@@ -106,9 +106,16 @@ class PolynomialIdentifier:
                 lfsr.next()
             for _ in range(2 * lfsr_iteration_approx):
                 if lfsr.next() == final_LFSR_value:
-                    print(f"{hex(lfsr.poly)} found")
-                    print(f"cpt {lfsr.cpt_for(final_LFSR_value)}")
-                    found_polys.append(lfsr.poly)
+                    found_polys.append(
+                        BeamAnalyzed(
+                            self.iteration_estimation,
+                            lfsr=lfsr,
+                            iteration_2_words=lfsr.cpt_for(final_LFSR_value),
+                        )
+                    )
+        if len(found_polys) == 0:
+            found_polys.append(BeamAnalyzed(self.iteration_estimation))
+
         return found_polys
 
 
