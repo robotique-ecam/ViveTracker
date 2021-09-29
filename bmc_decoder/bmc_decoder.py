@@ -38,8 +38,8 @@ class SingleWord:
 class SingleBeamBMC:
     """Single Beam Biphase Mark Code class storing data of valid bmc for this beam"""
 
-    def __init__(self, periodic_waveform: list, start_timestamp: np.float64):
-        self.values = periodic_waveform
+    def __init__(self, waveform: list, start_timestamp: np.float64):
+        self.values = waveform
         self.start_timestamp = start_timestamp
 
 

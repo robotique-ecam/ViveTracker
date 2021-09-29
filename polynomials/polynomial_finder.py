@@ -9,6 +9,37 @@ from lfsr.lfsr import LFSR
 from lfsr.constants import polys, data_period, lfsr_iteration_approx, bmc_period
 
 
+class BeamAnalyzed:
+    def __init__(
+        self, iteration_estim_2_words: int, lfsr=None, iteration_2_words=-1
+    ) -> None:
+        self.beam_number = -1
+        self.iteration_estim_2_words = iteration_estim_2_words
+
+        if lfsr != None and iteration_2_words != -1:
+            self.polynomial = lfsr.poly
+            real_iteration_lfsr = LFSR(lfsr.poly)
+            self.lfsr_iteration = real_iteration_lfsr.cpt_for(lfsr.start)
+            self.iteration_2_words = iteration_2_words
+
+    def is_messy(self) -> bool:
+        return not hasattr(self, "polynomial")
+
+    def __str__(self) -> str:
+        string = f"Beam n°{self.beam_number}\n"
+
+        if hasattr(self, "polynomial"):
+            string += f"\tPolynomial of this beam: {hex(self.polynomial)}\n"
+            string += f"\tNumber of LFSR iterations: {self.lfsr_iteration}\n\n"
+        else:
+            string += "No polys found for this beam\n"
+
+        string += f"\tEstimated LFSR iterations between 2 words analyzed: {self.iteration_estim_2_words}\n"
+
+        if hasattr(self, "iteration_2_words"):
+            string += f"\tReal LFSR iterations between 2 words analyzed: {self.iteration_2_words}\n\n"
+        return string
+
 class PolynomialIdentifier:
     def __init__(self, first_word: SingleWord, second_word: SingleWord) -> None:
         self.w_1 = first_word
