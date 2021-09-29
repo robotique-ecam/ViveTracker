@@ -129,12 +129,15 @@ class BMC_decoder:
                             skip = True
                 else:
                     skip = False
-
-            if len(validity_indexes[-1]) == 1:
-                if len(pot_bmc) - validity_indexes[-1][0] > self.min_bit_required * 2:
-                    validity_indexes[-1].append(len(pot_bmc))
-                else:
-                    validity_indexes.pop(-1)
+            if (len(validity_indexes)) != 0:
+                if len(validity_indexes[-1]) == 1:
+                    if (
+                        len(pot_bmc) - validity_indexes[-1][0]
+                        > self.min_bit_required * 2
+                    ):
+                        validity_indexes[-1].append(len(pot_bmc))
+                    else:
+                        validity_indexes.pop(-1)
 
             self.bmc_beams_indexes.append(validity_indexes)
 
@@ -213,17 +216,21 @@ class BMC_decoder:
         )
 
     def get_first_and_last_word_from_beam(self, beam: int) -> list[SingleWord]:
-        return [
-            SingleWord(
-                self.decoded_bmc[beam][0][:17],
-                self.get_timestamp_from_index(
-                    beam, self.bmc_beams_indexes[beam][0][0], True
+        if len(self.decoded_bmc[beam]) != 0:
+            return [
+                SingleWord(
+                    self.decoded_bmc[beam][0][:17],
+                    self.get_timestamp_from_index(
+                        beam, self.bmc_beams_indexes[beam][0][0], True
+                    ),
                 ),
-            ),
-            SingleWord(
-                self.decoded_bmc[beam][-1][-17:],
-                self.get_timestamp_from_index(
-                    beam, self.bmc_beams_indexes[beam][-1][-1], False
+                SingleWord(
+                    self.decoded_bmc[beam][-1][-17:],
+                    self.get_timestamp_from_index(
+                        beam, self.bmc_beams_indexes[beam][-1][-1], False
+                    ),
                 ),
-            ),
-        ]
+            ]
+        else:
+            print(f"Unable to get words on beam {beam}")
+            return None
