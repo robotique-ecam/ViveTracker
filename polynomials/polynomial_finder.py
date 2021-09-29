@@ -40,6 +40,37 @@ class BeamAnalyzed:
             string += f"\tReal LFSR iterations between 2 words analyzed: {self.iteration_2_words}\n\n"
         return string
 
+
+class SynthetizedBeamsAnalyzed:
+    def __init__(self) -> None:
+        self.cleanAnalyzedBeams = []
+        self.messyAnalyzedBeams = []
+
+    def __number_of_beam(self) -> int:
+        return len(self.cleanAnalyzedBeams) + len(self.messyAnalyzedBeams)
+
+    def add_beam(self, beamsAnalyzed: list[BeamAnalyzed]):
+        beam_number = self.__number_of_beam()
+        for beam in beamsAnalyzed:
+            beam.beam_number = beam_number
+            if beam.is_messy():
+                self.messyAnalyzedBeams.append(beam)
+            else:
+                self.cleanAnalyzedBeams.append(beam)
+
+    def __str__(self) -> str:
+        string = ""
+        if len(self.cleanAnalyzedBeams) != 0:
+            string += "Clean analysed beam\n"
+            for i in self.cleanAnalyzedBeams:
+                string += str(i)
+        if len(self.messyAnalyzedBeams) != 0:
+            string += "Messy analysed beam\n"
+            for i in self.messyAnalyzedBeams:
+                string += str(i)
+        return string
+
+
 class PolynomialIdentifier:
     def __init__(self, first_word: SingleWord, second_word: SingleWord) -> None:
         self.w_1 = first_word
