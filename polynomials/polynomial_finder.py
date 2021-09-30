@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+
+
+""" Polynomials identifier package """
+
 import sys
 
 sys.path.append("../")
@@ -6,10 +11,12 @@ import numpy as np
 
 from bmc_decoder.bmc_decoder import BMC_decoder, SingleWord
 from lfsr.lfsr import LFSR
-from lfsr.constants import polys, data_period, lfsr_iteration_approx, bmc_period
+from lfsr.constants import polys, data_period, lfsr_iteration_approx
 
 
 class BeamAnalyzed:
+    """Beam Aalyzed class contains details of an analyzed beam"""
+
     def __init__(
         self, iteration_estim_2_words: int, lfsr=None, iteration_2_words=-1
     ) -> None:
@@ -23,6 +30,8 @@ class BeamAnalyzed:
             self.iteration_2_words = iteration_2_words
 
     def is_messy(self) -> bool:
+        """Identifies if this Beam Analyzed object is clean or not i.e. if the polynomial has been found"""
+
         return not hasattr(self, "polynomial")
 
     def __str__(self) -> str:
@@ -42,15 +51,21 @@ class BeamAnalyzed:
 
 
 class SynthetizedBeamsAnalyzed:
+    """Synthetized Beam Analyzed class is a synthesis of beams analysis of a document"""
+
     def __init__(self) -> None:
         self.cleanAnalyzedBeams = []
         self.messyAnalyzedBeams = []
         self.polynomials_used = {}
 
     def __number_of_beam(self) -> int:
+        """Private function returning the number of beams analyzed"""
+
         return len(self.cleanAnalyzedBeams) + len(self.messyAnalyzedBeams)
 
     def add_beam(self, beamsAnalyzed: list[BeamAnalyzed]):
+        """Sorts the beam beam whether it contains a polynomial or not"""
+
         beam_number = self.__number_of_beam()
         for beam in beamsAnalyzed:
             beam.beam_number = beam_number
@@ -64,6 +79,8 @@ class SynthetizedBeamsAnalyzed:
                 self.cleanAnalyzedBeams.append(beam)
 
     def save_synthesis(self, path: str) -> None:
+        """Save the str of this synthesis in the given text file path"""
+
         text_file = open(path, "w")
         text_file.write(self.__str__())
         text_file.close()
@@ -91,19 +108,29 @@ class SynthetizedBeamsAnalyzed:
 
 
 class PolynomialIdentifier:
+    """Polynomial Identifier class interpolates a potential polynomial between 2 SingleWord object"""
+
     def __init__(self, first_word: SingleWord, second_word: SingleWord) -> None:
         self.w_1 = first_word
         self.w_2 = second_word
         self.iteration_estimation = self.__iteration_estimator()
 
     def __find_diff_timestamp(self) -> np.float64:
+        """Private function returning the difference of timestamp between
+        the 2 SingleWord objects w_1 and w_2"""
+
         return abs(self.w_1.start_timestamp - self.w_2.start_timestamp)
 
     def __iteration_estimator(self) -> int:
+        """Private function estimating the theorical LFSR number of iteration
+        between w_1 and w_2 SingleWord objects"""
         diff_ts = self.__find_diff_timestamp()
         return int(diff_ts / data_period)
 
     def __init_LFSRs(self) -> list[LFSR]:
+        """Private function instantiating all 32 LFSRs with the 32 polynomials of
+        the LH 2.0 all starting at the word having the earliest timestamp"""
+
         initial_LFSR_value = (
             self.w_1.data
             if self.w_1.start_timestamp < self.w_2.start_timestamp
@@ -112,6 +139,9 @@ class PolynomialIdentifier:
         return [LFSR(poly, initial_LFSR_value) for poly in polys]
 
     def search_polynomial(self) -> list[BeamAnalyzed]:
+        """Tries to interpolate a list of theorical polynomials for this w_1 and w_2 SingleWord object
+        Whole description of this algorithm on the Trello"""
+
         found_polys = []
         lfsrs = self.__init_LFSRs()
         final_LFSR_value = (
