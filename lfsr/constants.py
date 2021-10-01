@@ -57,3 +57,11 @@ periods = [
     893000,
     887000,
 ]
+
+data_frequency = 6e6
+bmc_frequency = 2 * data_frequency
+
+data_period = 1 / data_frequency
+bmc_period = 1 / bmc_frequency
+
+lfsr_iteration_approx = 3

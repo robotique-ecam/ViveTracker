@@ -3,18 +3,47 @@
 
 """ BMC decoder package """
 
+import sys
+
+sys.path.append("../")
 
 import pandas as pd
 import numpy as np
 
 from copy import deepcopy
+from lfsr.constants import bmc_period
+
+
+class SingleWord:
+    """Single Word class is a class storing details of a 17 bit word from decoded BMC"""
+
+    def __init__(self, waveform: list, start_timestamp: np.float64) -> None:
+        if len(waveform) != 17:
+            raise Exception("Illegal word size (!= 17)")
+        self.waveform = waveform
+        self.start_timestamp = start_timestamp
+        self.data = self.__get_value_from_waveform()
+
+    def __get_value_from_waveform(self) -> int:
+        """Private function converting the waveform to the 17 bit int type data"""
+
+        data = 0
+        for i in range(len(self.waveform)):
+            data = (self.waveform[-1 - i] << i) | data
+        return data
+
+    def __str__(self) -> str:
+        string = f"waveform: {self.waveform}\n"
+        string += f"start_timestamp {self.start_timestamp}\n"
+        string += f"data:\n\t binary -> {bin(self.data)},\n\t hex -> {hex(self.data)},\n\t int -> {self.data}\n"
+        return string
 
 
 class SingleBeamBMC:
     """Single Beam Biphase Mark Code class storing data of valid bmc for this beam"""
 
-    def __init__(self, periodic_waveform: list, start_timestamp: np.float64):
-        self.values = periodic_waveform
+    def __init__(self, waveform: list, start_timestamp: np.float64):
+        self.values = waveform
         self.start_timestamp = start_timestamp
 
 
@@ -104,12 +133,15 @@ class BMC_decoder:
                             skip = True
                 else:
                     skip = False
-
-            if len(validity_indexes[-1]) == 1:
-                if len(pot_bmc) - validity_indexes[-1][0] > self.min_bit_required * 2:
-                    validity_indexes[-1].append(len(pot_bmc))
-                else:
-                    validity_indexes.pop(-1)
+            if (len(validity_indexes)) != 0:
+                if len(validity_indexes[-1]) == 1:
+                    if (
+                        len(pot_bmc) - validity_indexes[-1][0]
+                        > self.min_bit_required * 2
+                    ):
+                        validity_indexes[-1].append(len(pot_bmc))
+                    else:
+                        validity_indexes.pop(-1)
 
             self.bmc_beams_indexes.append(validity_indexes)
 
@@ -127,7 +159,7 @@ class BMC_decoder:
                 bmc_decoded = []
 
                 for i in range(bmc_beam_index[0] + 1, bmc_beam_index[1], 2):
-                    potential_bmc_this_beam = bmc_decoder.potential_bmcs[
+                    potential_bmc_this_beam = self.potential_bmcs[
                         single_beam_bmc_indexes
                     ]
 
@@ -167,14 +199,46 @@ class BMC_decoder:
         string += "\n"
         return string
 
+    def decode_whole_document(self):
+        """Call all functions in order to get the decoded object state"""
 
-# csv_doc = "../data/12MHz_100ms"
-csv_doc = "test"
+        self.envelope_0_finder()
+        self.periodic_filler()
+        self.get_valid_bmc_indexes()
+        self.decode_bmc()
 
-bmc_decoder = BMC_decoder(csv_doc)
-bmc_decoder.envelope_0_finder()
-bmc_decoder.periodic_filler()
-bmc_decoder.get_valid_bmc_indexes()
-bmc_decoder.decode_bmc()
+    def get_timestamp_from_index(
+        self, beam: int, index: int, first_word: bool
+    ) -> np.float64:
+        """Function returning timestamp of a given beam an periodic index of this beam"""
 
-print(bmc_decoder)
+        return (
+            self.time_column[self.indexes_0_envelope[beam][0]]
+            + (
+                index
+                + (self.min_bit_required if first_word else -self.min_bit_required)
+            )
+            * bmc_period
+        )
+
+    def get_first_and_last_word_from_beam(self, beam: int) -> list[SingleWord]:
+        """Returns the first and last decoded words of a given beam"""
+
+        if len(self.decoded_bmc[beam]) != 0:
+            return [
+                SingleWord(
+                    self.decoded_bmc[beam][0][:17],
+                    self.get_timestamp_from_index(
+                        beam, self.bmc_beams_indexes[beam][0][0], True
+                    ),
+                ),
+                SingleWord(
+                    self.decoded_bmc[beam][-1][-17:],
+                    self.get_timestamp_from_index(
+                        beam, self.bmc_beams_indexes[beam][-1][-1], False
+                    ),
+                ),
+            ]
+        else:
+            print(f"Unable to get words on beam {beam}")
+            return None
