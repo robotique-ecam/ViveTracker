@@ -15,7 +15,7 @@ from lfsr.constants import bmc_period
 
 
 class SingleWord:
-    """Single Word class is a class that storing details of a 17 bit word from decoded BMC"""
+    """Single Word class is a class storing details of a 17 bit word from decoded BMC"""
 
     def __init__(self, waveform: list, start_timestamp: np.float64) -> None:
         if len(waveform) != 17:
@@ -210,7 +210,7 @@ class BMC_decoder:
     def get_timestamp_from_index(
         self, beam: int, index: int, first_word: bool
     ) -> np.float64:
-        """Funtion returning timestamp of a given beam an periodic index of this beam"""
+        """Function returning timestamp of a given beam an periodic index of this beam"""
 
         return (
             self.time_column[self.indexes_0_envelope[beam][0]]
