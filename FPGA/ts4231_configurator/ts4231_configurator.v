@@ -8,18 +8,23 @@ module ts4231_configurator (
   output wire state_led
   );
 
+// 48 MHz clock generation
 wire clk_48MHz;
 wire lock;
-/*
+
 `ifdef SIMULATION
   assign clk_48MHz = clk;
-`endif*/
+`endif
+
 pll_module PLL (
   .clock_in (clk),
   .clock_out (clk_48MHz),
   .locked (lock)
   );
 
+
+
+// 24 MHz clock generation
 wire clk_24MHz;
 
 divider #(.M (2))
@@ -28,6 +33,9 @@ divider #(.M (2))
     .clk_out (clk_24MHz)
     );
 
+
+
+// inout pin definition using primitive SB_IO
 reg envelop_output_enable;
 reg envelop_output;
 reg envelop_input;
@@ -56,6 +64,9 @@ SB_IO #(
     .D_IN_0(data_input)
 );
 
+
+
+// registration of data and envelop signal
 reg data_r;
 reg envelop_r;
 
@@ -64,6 +75,9 @@ always @ (posedge clk_48MHz) begin
   envelop_r <= envelop_input;
 end
 
+
+
+// configuration management
 reg reconfigure = 1'b1;
 reg configured;
 
@@ -75,6 +89,9 @@ always @ (posedge clk_48MHz) begin
   end
 end
 
+
+
+// ts4231Configurator instanciation
 ts4231Configurator CONFIGURATOR (
   .clk (clk_24MHz),
   .reconfigure (reconfigure),
@@ -87,10 +104,13 @@ ts4231Configurator CONFIGURATOR (
   .e_oe (envelop_output_enable)
   );
 
-  divider #(.M (96000000))
-    DIV1 (
-      .clk_in (clk_48MHz),
-      .clk_out (state_led)
-      );
+
+
+// state_led blinking at 0.5 Hz
+divider #(.M (96000000))
+  DIV1 (
+    .clk_in (clk_48MHz),
+    .clk_out (state_led)
+    );
 
 endmodule // ts4231_configurator
