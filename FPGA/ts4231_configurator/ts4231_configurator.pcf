@@ -1,0 +1,4 @@
+set_io clk 21
+set_io envelop 62
+set_io data 61
+set_io state_led 95
