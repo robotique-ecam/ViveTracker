@@ -15,9 +15,9 @@ module ts4231Configurator (
 
   //1MHz clock generator
   reg config_enable = 0;
-  reg [5:0] config_enable_crt = 0;
+  reg [6:0] config_enable_crt = 0;
   always @(posedge clk) begin
-    if (config_enable_crt == 23) begin
+    if (config_enable_crt == 95) begin
       config_enable_crt <= 0;
       config_enable <= 1;
     end else begin
