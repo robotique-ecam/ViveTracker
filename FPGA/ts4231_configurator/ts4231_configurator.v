@@ -12,8 +12,7 @@ module ts4231_configurator (
   output reg data_output_enable,
   output reg data_output,
 
-  output reg configured,
-  output wire state_led
+  output reg configured
   );
 
 
@@ -42,14 +41,5 @@ ts4231Configurator CONFIGURATOR (
   .e_out (envelop_output),
   .e_oe (envelop_output_enable)
   );
-
-
-
-// state_led blinking at 1 Hz
-divider #(.M (96000000))
-  DIV1 (
-    .clk_in (clk_96MHz),
-    .clk_out (state_led)
-    );
 
 endmodule // ts4231_configurator
