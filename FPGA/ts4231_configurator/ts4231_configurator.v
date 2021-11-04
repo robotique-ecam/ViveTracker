@@ -1,5 +1,4 @@
 `default_nettype none
-//`define SIMULATION
 
 module ts4231_configurator (
   input wire clk_96MHz,
