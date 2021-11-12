@@ -44,13 +44,13 @@ reg [2:0] car_count = 0;
 
 always @ ( posedge clk_12MHz ) begin
   case (car_count)
-    8'd0: data <= decoded_data_transmit[7:0];
+    8'd0: data <= decoded_data_transmit[23:16];
     8'd1: data <= decoded_data_transmit[15:8];
-    8'd2: data <= decoded_data_transmit[23:16];
+    8'd2: data <= decoded_data_transmit[7:0];
     8'd3: data <= 8'h00;
-    8'd4: data <= timestamp_last_data[7:0];
+    8'd4: data <= timestamp_last_data[23:16];
     8'd5: data <= timestamp_last_data[15:8];
-    8'd6: data <= timestamp_last_data[23:16];
+    8'd6: data <= timestamp_last_data[7:0];
     8'd7: data <= 8'h00;
     default: data <= 8'hff;
   endcase
