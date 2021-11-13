@@ -1,8 +1,8 @@
 #----------------------------------------
 #-- Name of the component
 #----------------------------------------
-NAME = ts4231_configurator
-DEPS = pll_module.v divider.v ts4231Configurator.v
+NAME = serial_transmitter
+DEPS = ../uart_tx_module/uart_tx.v ../uart_tx_module/baudgen.v
 
 #-------------------------------------------------------
 #-- By default --> simulation and synthesis
@@ -37,7 +37,7 @@ flash:
 $(NAME)_tb.vcd: $(NAME).v $(NAME)_tb.v $(DEPS)
 
 	#-- Compilation
-	iverilog -g2005-sv -o $(NAME)_tb.out $^ `yosys-config --datdir/ice40/cells_sim.v`
+	iverilog $^ -o $(NAME)_tb.out
 
 	#-- Simulation
 	./$(NAME)_tb.out

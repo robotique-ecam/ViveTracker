@@ -63,7 +63,7 @@ class SynthetizedBeamsAnalyzed:
 
         return len(self.cleanAnalyzedBeams) + len(self.messyAnalyzedBeams)
 
-    def add_beam(self, beamsAnalyzed: list[BeamAnalyzed]):
+    def add_beam(self, beamsAnalyzed: list):
         """Sorts the beam beam whether it contains a polynomial or not"""
 
         beam_number = self.__number_of_beam()
@@ -127,7 +127,7 @@ class PolynomialIdentifier:
         diff_ts = self.__find_diff_timestamp()
         return int(diff_ts / data_period)
 
-    def __init_LFSRs(self) -> list[LFSR]:
+    def __init_LFSRs(self) -> list:
         """Private function instantiating all 32 LFSRs with the 32 polynomials of
         the LH 2.0 all starting at the word having the earliest timestamp"""
 
@@ -138,7 +138,7 @@ class PolynomialIdentifier:
         )
         return [LFSR(poly, initial_LFSR_value) for poly in polys]
 
-    def search_polynomial(self) -> list[BeamAnalyzed]:
+    def search_polynomial(self) -> list:
         """Tries to interpolate a list of theorical polynomials for this w_1 and w_2 SingleWord object
         Whole description of this algorithm on the Trello"""
 

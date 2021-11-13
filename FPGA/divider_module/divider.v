@@ -15,4 +15,4 @@ end
 
 assign clk_out = divcounter[N-1];
 
-endmodule // divisor
+endmodule // divider

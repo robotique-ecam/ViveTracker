@@ -1,8 +1,8 @@
 #----------------------------------------
 #-- Name of the component
 #----------------------------------------
-NAME = receivers_top_level
-DEPS = ../divider_module/divider.v ../pll_module/pll_module.v ../single_receiver_manager/single_receiver_manager.v ../ts4231_configurator/ts4231_configurator.v ../ts4231_configurator/ts4231Configurator.v ../serial_transmitter/serial_transmitter.v ../bmc_decoder/bmc_decoder.v ../uart_tx_module/uart_tx.v ../uart_tx_module/baudgen.v
+NAME = uart_tx
+DEPS = divider.v baudgen.v
 
 #-------------------------------------------------------
 #-- By default --> simulation and synthesis

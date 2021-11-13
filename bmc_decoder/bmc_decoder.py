@@ -17,12 +17,15 @@ from lfsr.constants import bmc_period
 class SingleWord:
     """Single Word class is a class storing details of a 17 bit word from decoded BMC"""
 
-    def __init__(self, waveform: list, start_timestamp: np.float64) -> None:
-        if len(waveform) != 17:
-            raise Exception("Illegal word size (!= 17)")
-        self.waveform = waveform
+    def __init__(self, waveform: list, start_timestamp: np.float64, data=None) -> None:
+        if data == None:
+            if len(waveform) != 17:
+                raise Exception("Illegal word size (!= 17)")
+            self.waveform = waveform
+            self.data = self.__get_value_from_waveform()
+        else:
+            self.data = data
         self.start_timestamp = start_timestamp
-        self.data = self.__get_value_from_waveform()
 
     def __get_value_from_waveform(self) -> int:
         """Private function converting the waveform to the 17 bit int type data"""
@@ -221,7 +224,7 @@ class BMC_decoder:
             * bmc_period
         )
 
-    def get_first_and_last_word_from_beam(self, beam: int) -> list[SingleWord]:
+    def get_first_and_last_word_from_beam(self, beam: int) -> list:
         """Returns the first and last decoded words of a given beam"""
 
         if len(self.decoded_bmc[beam]) != 0:
