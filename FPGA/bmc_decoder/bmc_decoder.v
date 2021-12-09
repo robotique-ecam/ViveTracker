@@ -22,7 +22,7 @@ parameter too_fast_counter = 3;
 parameter fast_counter = 11;
 parameter slow_counter = 11;
 parameter timeout_counter = 24;
-parameter waiting_ticks = 14000; // 146µs
+parameter waiting_ticks = 96000; //1ms 14000; // 146µs
 
 localparam  IDLE = 0;
 localparam  START_SAMPLING = 1;
@@ -36,7 +36,7 @@ localparam  WAITING_TIME = 7;
 
 reg sampling_ena = 0;
 reg [4:0] tick_counter = 0;
-reg [13:0] wait_counter = 0;
+reg [16:0] wait_counter = 0;
 reg [4:0] nb_bits_recovered = 0;
 reg nb_fast_state = 0;
 reg slow_state_detected = 0;
