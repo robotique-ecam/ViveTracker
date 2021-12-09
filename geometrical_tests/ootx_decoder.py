@@ -10,23 +10,19 @@ from timestamp_computing import TimestampComputing
 from lfsr.lfsr import LFSR
 
 ts_computing = TimestampComputing()
-ootx=""
+ootx = ""
 
 for words in ootx_data:
 
     diff_ts = ts_computing.get_ts_diff(words[0][1], words[1][1])
 
-    first_word = SingleWord(
-        waveform=[], start_timestamp=0, data=words[0][0]
-    )
-    second_word = SingleWord(
-        waveform=[], start_timestamp=diff_ts, data=words[1][0]
-    )
+    first_word = SingleWord(waveform=[], start_timestamp=0, data=words[0][0])
+    second_word = SingleWord(waveform=[], start_timestamp=diff_ts, data=words[1][0])
 
     identifier = PolynomialIdentifier(first_word, second_word, first_two_polys=True)
     resulting_polys = identifier.search_polynomial()
 
-    #for i in resulting_polys:
+    # for i in resulting_polys:
     #    print(i)
 
     if hasattr(resulting_polys[0], "polynomial"):
@@ -39,7 +35,7 @@ for words in ootx_data:
     else:
         print(hex(words[0][1]))
         print(diff_ts)
-        #exit()
+        # exit()
         ootx += " "
 
 print(ootx)

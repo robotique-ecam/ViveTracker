@@ -4,18 +4,18 @@ number_of_bits = 443
 
 print(slow_ootx_bits[:number_of_bits])
 print()
-print(slow_ootx_bits[number_of_bits:2*number_of_bits])
+print(slow_ootx_bits[number_of_bits : 2 * number_of_bits])
 print()
-print(slow_ootx_bits[2*number_of_bits:3*number_of_bits])
+print(slow_ootx_bits[2 * number_of_bits : 3 * number_of_bits])
 print()
-print(slow_ootx_bits[3*number_of_bits:4*number_of_bits])
+print(slow_ootx_bits[3 * number_of_bits : 4 * number_of_bits])
 print()
-print(slow_ootx_bits[4*number_of_bits:5*number_of_bits])
+print(slow_ootx_bits[4 * number_of_bits : 5 * number_of_bits])
 print()
 
-ootx1 = slow_ootx_bits[number_of_bits:2*number_of_bits]
-ootx2 = slow_ootx_bits[2*number_of_bits:3*number_of_bits]
-ootx3 = slow_ootx_bits[3*number_of_bits:4*number_of_bits]
+ootx1 = slow_ootx_bits[number_of_bits : 2 * number_of_bits]
+ootx2 = slow_ootx_bits[2 * number_of_bits : 3 * number_of_bits]
+ootx3 = slow_ootx_bits[3 * number_of_bits : 4 * number_of_bits]
 
 full_ootx = ""
 
