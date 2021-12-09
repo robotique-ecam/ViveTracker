@@ -1,4 +1,5 @@
 `default_nettype none
+`include "../uart_tx_module/uart_tx.v"
 
 module serial_transmitter (
   input wire clk_12MHz,

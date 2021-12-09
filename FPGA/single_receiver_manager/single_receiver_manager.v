@@ -1,5 +1,8 @@
 `default_nettype none
 
+`include "../bmc_decoder/bmc_decoder.v"
+`include "../ts4231_configurator/ts4231_configurator.v"
+
 module single_receiver_manager (
   input wire clk_96MHz,
   input wire e_in_0,

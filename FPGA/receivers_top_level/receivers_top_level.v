@@ -1,5 +1,10 @@
 `default_nettype none
 
+`include "../pll_module/pll_module.v"
+`include "../single_receiver_manager/single_receiver_manager.v"
+`include "../pulse_identifier/pulse_identifier.v"
+`include "../serial_transmitter/serial_transmitter.v"
+
 module receivers_top_level (
   input wire clk_12MHz,
   inout wire envelop,

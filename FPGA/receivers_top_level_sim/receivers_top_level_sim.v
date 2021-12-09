@@ -1,5 +1,8 @@
 `default_nettype none
 
+`include "../single_receiver_manager_sim/single_receiver_manager.v"
+`include "../serial_transmitter/serial_transmitter.v"
+
 module receivers_top_level_sim (
   input wire clk_12MHz,
   input wire clk_96MHz,
