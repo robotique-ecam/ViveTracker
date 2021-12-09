@@ -7,3 +7,5 @@ set_io state_led2 97
 set_io state_led3 98
 set_io state_led4 99
 set_io tx 8
+set_io envelop1 60
+set_io data1 56
