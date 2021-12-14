@@ -14,7 +14,7 @@ $(TARGET)_out.config: $(TARGET).json
 	nextpnr-ecp5 --25k --package CABGA381 --speed 6 --json $< --textcfg $@ --lpf $(TARGET).lpf --freq 65
 
 $(TARGET).bit: $(TARGET)_out.config
-	ecppack --svf ${TARGET}.svf $< $@
+	ecppack --compress --svf ${TARGET}.svf $< $@
 
 ${TARGET}.svf : ${TARGET}.bit
 
