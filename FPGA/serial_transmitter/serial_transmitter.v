@@ -64,15 +64,14 @@ always @ ( posedge clk_12MHz ) begin
 end
 
 
-
-
 // CONTROLLER
 
 localparam IDLE = 0;
 localparam LOAD_DATA = 1;
-localparam TXCAR = 2;
-localparam NEXT = 3;
-localparam END = 4;
+localparam RESET_PULSE_IDENTIFIER = 2;
+localparam TXCAR = 3;
+localparam NEXT = 4;
+localparam END = 5;
 
 reg [2:0] state;
 
@@ -85,7 +84,6 @@ always @ (posedge clk_12MHz) begin
       IDLE: begin
           if (data_availible == 1) begin
             state <= LOAD_DATA;
-            reset_pulse_identifier <= 1;
           end
         end
 
@@ -93,11 +91,16 @@ always @ (posedge clk_12MHz) begin
           decoded_data0_transmit <= { 7'b0000000 ,pulse_id_0};
           decoded_data1_transmit <= { 7'b0000000 ,pulse_id_1};
           decoded_polynomial_transmit <= { 7'b0000000 ,polynomial};
-          reset_pulse_identifier <= 0;
-          state <= TXCAR;
+          state <= RESET_PULSE_IDENTIFIER;
         end
 
+      RESET_PULSE_IDENTIFIER: begin
+        reset_pulse_identifier <= 1;
+        state <= TXCAR;
+      end
+
       TXCAR: begin
+        reset_pulse_identifier <= 0;
           if (ready) begin
             start <= 1;
             state <= NEXT;

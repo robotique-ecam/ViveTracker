@@ -48,7 +48,7 @@ module ts4231Configurator (
   reg [5:0] config_bit_counter = 0;
   reg [15:0] config_value = {15'h392b, 1'b0};
   reg config_bit = 0;
-  reg [4:0] config_wait_counter = 0;
+  reg [3:0] config_wait_counter = 0;
   always @(posedge clk) begin
     if (config_enable) begin
       prev_reconfigure <= reconfigure;
