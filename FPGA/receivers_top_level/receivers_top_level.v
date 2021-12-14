@@ -4,9 +4,10 @@
 `include "../single_receiver_manager/single_receiver_manager.v"
 `include "../pulse_identifier/pulse_identifier.v"
 `include "../serial_transmitter/serial_transmitter.v"
+`include "../inout_face_manager/inout_face_manager_0.v"
 
 module receivers_top_level (
-  input wire clk_12MHz,
+  input wire clk_25MHz,
   inout wire envelop,
   inout wire data,
   inout wire envelop1,
@@ -20,21 +21,13 @@ module receivers_top_level (
   );
 
 wire clk_96MHz;
-wire clk_48MHz;
-wire lock;
+wire clk_12MHz;
 
-pll_module PLL (
-  .clock_in (clk_12MHz),
-  .clock_out (clk_96MHz),
-  .locked (lock)
+pll_module PLLs (
+  .clk_25MHz (clk_25MHz),
+  .clk_96MHz (clk_96MHz),
+  .clk_12MHz (clk_12MHz)
   );
-
-reg [0:0] counter = 0;
-always @ (posedge clk_96MHz) begin
-  counter <= counter + 1;
-end
-
-assign clk_48MHz = counter == 0;
 
 reg [23:0] system_timestamp = 0;
 always @ (posedge clk_96MHz) begin
@@ -52,6 +45,42 @@ wire envelop_output_enable;
 wire envelop_output;
 wire e_in_0;
 
+wire data_output_enable;
+wire data_output;
+wire d_in_0, d_in_1;
+
+// inout pin definition using primitive SB_IO
+wire envelop1_output_enable;
+wire envelop1_output;
+wire e1_in_0;
+
+wire data1_output_enable;
+wire data1_output;
+wire d1_in_0, d1_in_1;
+
+inout_face_manager_0 INOUT0 (
+  .clk_96MHz (clk_96MHz),
+  .data_wire_0 (data),
+  .d_oe_0 (data_output_enable),
+  .d_out_0 (data_output),
+  .d_in_first_0 (d_in_0),
+  .d_in_second_0 (d_in_1),
+  .envelop_wire_0 (envelop),
+  .e_oe_0 (envelop_output_enable),
+  .e_out_0 (envelop_output),
+  .e_in_0 (e_in_0),
+  .data_wire_1 (data1),
+  .d_oe_1 (data1_output_enable),
+  .d_out_1 (data1_output),
+  .d_in_first_1 (d1_in_0),
+  .d_in_second_1 (d1_in_1),
+  .envelop_wire_1 (envelop1),
+  .e_oe_1 (envelop1_output_enable),
+  .e_out_1 (envelop1_output),
+  .e_in_1 (e1_in_0)
+  );
+
+/*
 SB_IO #(
     .PIN_TYPE(6'b 1010_00),
     .PULLUP(1'b 0)
@@ -61,10 +90,6 @@ SB_IO #(
     .D_OUT_0(envelop_output),
     .D_IN_0(e_in_0)
 );
-
-wire data_output_enable;
-wire data_output;
-wire d_in_0, d_in_1;
 
 SB_IO #(
     .PIN_TYPE(6'b 1010_00),
@@ -78,6 +103,7 @@ SB_IO #(
     .D_IN_1(d_in_1),
     .LATCH_INPUT_VALUE(1'b0)
 );
+*/
 
 wire reset;
 wire data_availible;
@@ -101,47 +127,6 @@ single_receiver_manager RECV0(
   .state_led (state_led)
   );
 
-
-
-
-
-// inout pin definition using primitive SB_IO
-wire envelop1_output_enable;
-wire envelop1_output;
-wire e1_in_0;
-
-SB_IO #(
-    .PIN_TYPE(6'b 1010_00),
-    .PULLUP(1'b 0)
-) envelop1_io (
-    .PACKAGE_PIN(envelop1),
-    .OUTPUT_ENABLE(envelop1_output_enable),
-    .D_OUT_0(envelop1_output),
-    .D_IN_0(e1_in_0)
-);
-
-wire data1_output_enable;
-wire data1_output;
-wire d1_in_0, d1_in_1;
-
-SB_IO #(
-    .PIN_TYPE(6'b 1010_00),
-    .PULLUP(1'b 0)
-) data1_io (
-    .INPUT_CLK (clk_48MHz),
-    .PACKAGE_PIN(data1),
-    .OUTPUT_ENABLE(data1_output_enable),
-    .D_OUT_0(data1_output),
-    .D_IN_0(d1_in_0),
-    .D_IN_1(d1_in_1),
-    .LATCH_INPUT_VALUE(1'b0)
-);
-
-wire reset1;
-wire data1_availible;
-wire [16:0] decoded_data1;
-wire [23:0] timestamp_last_data1;
-
 single_receiver_manager RECV1(
   .clk_96MHz (clk_96MHz),
   .e_in_0 (e1_in_0),
@@ -158,6 +143,41 @@ single_receiver_manager RECV1(
   .timestamp_last_data (timestamp_last_data1),
   .state_led (state_led1)
   );
+
+
+
+
+
+
+/*
+SB_IO #(
+    .PIN_TYPE(6'b 1010_00),
+    .PULLUP(1'b 0)
+) envelop1_io (
+    .PACKAGE_PIN(envelop1),
+    .OUTPUT_ENABLE(envelop1_output_enable),
+    .D_OUT_0(envelop1_output),
+    .D_IN_0(e1_in_0)
+);
+
+SB_IO #(
+    .PIN_TYPE(6'b 1010_00),
+    .PULLUP(1'b 0)
+) data1_io (
+    .INPUT_CLK (clk_48MHz),
+    .PACKAGE_PIN(data1),
+    .OUTPUT_ENABLE(data1_output_enable),
+    .D_OUT_0(data1_output),
+    .D_IN_0(d1_in_0),
+    .D_IN_1(d1_in_1),
+    .LATCH_INPUT_VALUE(1'b0)
+);
+*/
+
+wire reset1;
+wire data1_availible;
+wire [16:0] decoded_data1;
+wire [23:0] timestamp_last_data1;
 
 wire reset_pulse_identifier;
 wire [16:0] pulse_id_0;
