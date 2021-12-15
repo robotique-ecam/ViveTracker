@@ -1,6 +1,6 @@
 `default_nettype none
 
-module inout_face_manager_0 (
+module inout_face_manager (
   input wire clk_96MHz,
 
 
@@ -38,7 +38,7 @@ wire e_in_1_no_reg;
 reg buffer_0;
 reg buffer_1;
 
-(* LOC="D20" *) (* IO_TYPE="LVCMOS33" *)
+(* IO_TYPE="LVCMOS33" *)
 TRELLIS_IO #(.DIR("BIDIR"))
   inout_data_0 (
     .B(data_wire_0),
@@ -47,7 +47,7 @@ TRELLIS_IO #(.DIR("BIDIR"))
     .T(!d_oe_0)
     );
 
-(* LOC="B19" *) (* IO_TYPE="LVCMOS33" *)
+(* IO_TYPE="LVCMOS33" *)
 TRELLIS_IO #(.DIR("BIDIR"))
   inout_envelop_0 (
     .B(envelop_wire_0),
@@ -58,7 +58,7 @@ TRELLIS_IO #(.DIR("BIDIR"))
 
 
 
-(* LOC="A19" *) (* IO_TYPE="LVCMOS33" *)
+(* IO_TYPE="LVCMOS33" *)
 TRELLIS_IO #(.DIR("BIDIR"))
   inout_data_1 (
     .B(data_wire_1),
@@ -67,7 +67,7 @@ TRELLIS_IO #(.DIR("BIDIR"))
     .T(!d_oe_1)
     );
 
-(* LOC="A18" *) (* IO_TYPE="LVCMOS33" *)
+(* IO_TYPE="LVCMOS33" *)
 TRELLIS_IO #(.DIR("BIDIR"))
   inout_envelop_1 (
     .B(envelop_wire_1),

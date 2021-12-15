@@ -4,7 +4,7 @@
 `include "../single_receiver_manager/single_receiver_manager.v"
 `include "../pulse_identifier/pulse_identifier.v"
 `include "../serial_transmitter/serial_transmitter.v"
-`include "../inout_face_manager/inout_face_manager_0.v"
+`include "../inout_face_manager/inout_face_manager.v"
 
 module receivers_top_level (
   input wire clk_25MHz,
@@ -58,7 +58,7 @@ wire data1_output_enable;
 wire data1_output;
 wire d1_in_0, d1_in_1;
 
-inout_face_manager_0 INOUT0 (
+inout_face_manager INOUT0 (
   .clk_96MHz (clk_96MHz),
   .data_wire_0 (data),
   .d_oe_0 (data_output_enable),
