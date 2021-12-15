@@ -1,4 +1,5 @@
 `default_nettype none
+`include "../lfsr/lfsr.v"
 
 module offset_finder (
   input wire clk_96MHz,

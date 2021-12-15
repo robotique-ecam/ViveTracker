@@ -1,67 +1,49 @@
-#----------------------------------------
-#-- Name of the component
-#----------------------------------------
-NAME = uart_tx
-DEPS = divider.v baudgen.v
+TARGET=uart_tx
+TOP=uart_tx
 
-#-------------------------------------------------------
-#-- By default --> simulation and synthesis
-#-------------------------------------------------------
-all: sim sint
+OBJS+=$(TARGET).v
 
-#----------------------------------------------
-#-- make sim
-#----------------------------------------------
-#-- Make the simulation given by the test bench
-#----------------------------------------------
-sim: $(NAME)_tb.vcd
+TRELLIS=/usr/local/share/trellis
 
-#-----------------------------------------------
-#-  make sint
-#-----------------------------------------------
-#-  Make the synthesis for icestick FPGA
-#-----------------------------------------------
-sint: $(NAME).bin
+all: ${TARGET}.bit
 
-#-----------------------------------------------
-#-  make flash
-#-----------------------------------------------
-#-  Flash the icestick FPGA with the bitstream
-#-----------------------------------------------
-flash:
-	sudo iceprog $(NAME).bin
+$(TARGET).json: $(OBJS)
+	yosys -p "synth_ecp5 -json $@" $(OBJS)
 
-#-------------------------------
-#-- Compilation and simulation
-#-------------------------------
-$(NAME)_tb.vcd: $(NAME).v $(NAME)_tb.v $(DEPS)
+$(TARGET)_out.config: $(TARGET).json
+	nextpnr-ecp5 --25k --package CABGA381 --speed 6 --json $< --textcfg $@ --lpf $(TARGET).lpf --freq 65
 
-	#-- Compilation
-	iverilog $^ -o $(NAME)_tb.out
+$(TARGET).bit: $(TARGET)_out.config
+	ecppack --svf ${TARGET}.svf $< $@
 
-	#-- Simulation
-	./$(NAME)_tb.out
-
-	#-- To see the simulation in gtkwave
-	gtkwave $@ $(NAME)_tb.gtkw &
-
-#------------------------------
-#-- Complete synthesis
-#------------------------------
-$(NAME).bin: $(NAME).pcf $(NAME).v
-
-	#-- Synthesis
-	yosys -p "synth_ice40 -blif $(NAME).blif" $(NAME).v $(DEPS)
-
-	#-- Place & route
-	arachne-pnr -d 1k -p $(NAME).pcf $(NAME).blif -o $(NAME).txt
-
-	#-- Generate final bitstrem file
-	icepack $(NAME).txt $(NAME).bin
+${TARGET}.svf : ${TARGET}.bit
 
 
-#-- Limpiar todo
+$(TARGET)_tb.vcd: $(OBJS) $(TARGET)_tb.v
+	# Compilation
+	iverilog $^ -o $(TARGET)_tb.out
+
+	# Simulation
+	./$(TARGET)_tb.out
+
+	# To see the simulation in gtkwave
+	gtkwave $@ $(TARGET)_tb.gtkw
+
+
+
+# Make the simulation given by the test bench
+sim: $(TARGET)_tb.vcd
+
+# Compile, then program the SPI memory, then reboot ECP5
+prog: ${TARGET}.svf
+	sudo ecpdap flash write --freq 5000 $(TARGET).bit
+
+# Compile and flash volatile memory of ECP5, at reboot, the program stored
+# in the SPI is redefined as internal circuit
+flash: ${TARGET}.svf
+	sudo ecpdap program --freq 5000 $(TARGET).bit
+
 clean:
-	rm -f *.bin *.txt *.blif *.out *.vcd *~
+	rm -f *.svf *.bit *.config *.ys $(TARGET).json *.out *.vcd
 
-.PHONY: all clean
+.PHONY: prog clean

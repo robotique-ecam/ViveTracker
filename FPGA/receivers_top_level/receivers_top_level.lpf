@@ -1,0 +1,28 @@
+LOCATE      COMP "clk_25MHz"    SITE "P3";
+IOBUF       PORT "clk_25MHz"    IO_TYPE=LVCMOS33;
+FREQUENCY   PORT "clk_25MHz"    25 MHZ;
+
+LOCATE      COMP "tx"       SITE "J17";
+IOBUF       PORT "tx"       IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "state_led" SITE "U16";
+IOBUF       PORT "state_led" IO_TYPE=LVCMOS25;
+
+LOCATE      COMP "state_led1"  SITE "F2";
+IOBUF       PORT "state_led1"  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led2"  SITE "F1";
+IOBUF       PORT "state_led2"  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led3"  SITE "G3";
+IOBUF       PORT "state_led3"  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led4"  SITE "H4";
+IOBUF       PORT "state_led4"  IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "data"  SITE "D20";
+IOBUF       PORT "data" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "envelop"  SITE "B19";
+IOBUF       PORT "envelop" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "data1"  SITE "A19";
+IOBUF       PORT "data1" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "envelop1"  SITE "A18";
+IOBUF       PORT "envelop1" PULLMODE=NONE  IO_TYPE=LVCMOS33;

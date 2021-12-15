@@ -1,4 +1,6 @@
 `default_nettype none
+`include "../polynomial_finder/polynomial_finder.v"
+`include "../offset_finder/offset_finder.v"
 
 module pulse_identifier (
   input wire clk_96MHz,

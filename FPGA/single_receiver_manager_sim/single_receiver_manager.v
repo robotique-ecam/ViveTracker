@@ -1,5 +1,7 @@
 `default_nettype none
 
+`include "../bmc_decoder/bmc_decoder.v"
+
 module single_receiver_manager (
   input wire clk_96MHz,
   input wire e_in_0,

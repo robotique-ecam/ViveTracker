@@ -1,5 +1,8 @@
 `default_nettype none
 
+`include "../bmc_decoder/bmc_decoder.v"
+`include "../ts4231_configurator/ts4231_configurator.v"
+
 module single_receiver_manager (
   input wire clk_96MHz,
   input wire e_in_0,
@@ -18,11 +21,7 @@ module single_receiver_manager (
   output wire [16:0] decoded_data,
   output wire [23:0] timestamp_last_data,
 
-  output wire state_led,
-  output wire state_led1,
-  output wire state_led2,
-  output wire state_led3,
-  output wire state_led4
+  output wire state_led
   );
 
 reg configured;
@@ -50,11 +49,7 @@ bmc_decoder #(.bit_considered (17))
     .decoded_data (decoded_data),
     .data_availible (data_availible),
     .timestamp_last_data (timestamp_last_data),
-    .state_led (state_led),
-    .state_led1 (state_led1),
-    .state_led2 (state_led2),
-    .state_led3 (state_led3),
-    .state_led4 (state_led4)
+    .state_led (state_led)
     );
 
 endmodule // single_receiver_manager

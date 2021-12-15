@@ -1,7 +1,7 @@
 `default_nettype none
 
 `include "../uart_tx_module/baudgen.vh"
-
+`include "../uart_tx_module/baudgen.v"
 
 // Serial emmitter module
 // tx output is registered

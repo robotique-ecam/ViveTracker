@@ -1,5 +1,7 @@
 `default_nettype none
 
+`include "../ts4231_configurator/ts4231Configurator.v"
+
 module ts4231_configurator (
   input wire clk_96MHz,
 
