@@ -8,7 +8,7 @@ module single_receiver_manager (
   input wire e_in_0,
   input wire d_in_0,
   input wire d_in_1,
-  input wire [23:0] system_timestamp,
+  input wire [23:0] sys_ts,
   input wire reset,
 
   output reg envelop_output_enable,
@@ -19,12 +19,12 @@ module single_receiver_manager (
 
   output wire data_availible,
   output wire [16:0] decoded_data,
-  output wire [23:0] timestamp_last_data,
+  output wire [23:0] ts_last_data,
 
   output wire state_led
   );
 
-reg configured;
+wire configured;
 
 ts4231_configurator TS4231_CONFIGURATOR (
   .clk_96MHz (clk_96MHz),
@@ -44,11 +44,11 @@ bmc_decoder #(.bit_considered (17))
     .d_in_1 (d_in_1),
     .e_in_0 (e_in_0),
     .enabled (configured),
-    .system_timestamp (system_timestamp),
+    .sys_ts (sys_ts),
     .reset (reset),
     .decoded_data (decoded_data),
     .data_availible (data_availible),
-    .timestamp_last_data (timestamp_last_data),
+    .ts_last_data (ts_last_data),
     .state_led (state_led)
     );
 
