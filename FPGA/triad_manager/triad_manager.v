@@ -199,7 +199,4 @@ always @ (posedge clk_96MHz) begin
   end
 end
 
-//assign state_led = pulse_identifier_ready;
-
-
 endmodule // triad_manager

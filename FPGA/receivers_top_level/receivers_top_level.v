@@ -62,17 +62,4 @@ serial_transmitter UART (
   .reset_pulse_identifier (reset_pulse_identifier_0)
   );
 
-//assign state_led = sys_ts[23];
-
 endmodule // receivers_top_level
-
-/*
-LOCATE      COMP "state_led1"  SITE "F2";
-IOBUF       PORT "state_led1"  IO_TYPE=LVCMOS33;
-LOCATE      COMP "state_led2"  SITE "F1";
-IOBUF       PORT "state_led2"  IO_TYPE=LVCMOS33;
-LOCATE      COMP "state_led3"  SITE "G3";
-IOBUF       PORT "state_led3"  IO_TYPE=LVCMOS33;
-LOCATE      COMP "state_led4"  SITE "H4";
-IOBUF       PORT "state_led4"  IO_TYPE=LVCMOS33;
-*/
