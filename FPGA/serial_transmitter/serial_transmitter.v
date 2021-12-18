@@ -4,9 +4,7 @@
 module serial_transmitter (
   input wire clk_12MHz,
   input wire data_availible,
-  input wire [16:0] pulse_id_0,
-  input wire [16:0] pulse_id_1,
-  input wire [16:0] polynomial,
+  input wire [67:0] triad_data,
   output wire tx,
   output reg reset_pulse_identifier
   );
@@ -27,7 +25,7 @@ reg start;
 
 // DATA PATH
 
-reg [23:0] decoded_data0_transmit, decoded_data1_transmit, decoded_polynomial_transmit;
+reg [23:0] decoded_data0_transmit, decoded_data1_transmit, decoded_data2_transmit, decoded_polynomial_transmit;
 
 always @ (posedge clk_12MHz) begin
   rstn <= 1;
@@ -56,9 +54,12 @@ always @ ( posedge clk_12MHz ) begin
     8'd7: data <= decoded_data1_transmit[23:16];
     8'd8: data <= decoded_data1_transmit[15:8];
     8'd9: data <= decoded_data1_transmit[7:0];
-    8'd10: data <= decoded_polynomial_transmit[23:16];
-    8'd11: data <= decoded_polynomial_transmit[15:8];
-    8'd12: data <= decoded_polynomial_transmit[7:0];
+    8'd10: data <= decoded_data2_transmit[23:16];
+    8'd11: data <= decoded_data2_transmit[15:8];
+    8'd12: data <= decoded_data2_transmit[7:0];
+    8'd13: data <= decoded_polynomial_transmit[23:16];
+    8'd14: data <= decoded_polynomial_transmit[15:8];
+    8'd15: data <= decoded_polynomial_transmit[7:0];
     default: data <= 8'hff;
   endcase
 end
@@ -88,9 +89,10 @@ always @ (posedge clk_12MHz) begin
         end
 
       LOAD_DATA: begin
-          decoded_data0_transmit <= { 7'b0000000 ,pulse_id_0};
-          decoded_data1_transmit <= { 7'b0000000 ,pulse_id_1};
-          decoded_polynomial_transmit <= { 7'b0000000 ,polynomial};
+          decoded_data2_transmit <= { 7'b0000000, triad_data[67:51]};
+          decoded_data1_transmit <= { 7'b0000000, triad_data[50:34]};
+          decoded_data0_transmit <= { 7'b0000000, triad_data[33:17]};
+          decoded_polynomial_transmit <= { 7'b0000000, triad_data[16:0]};
           state <= RESET_PULSE_IDENTIFIER;
         end
 
@@ -109,7 +111,7 @@ always @ (posedge clk_12MHz) begin
 
       NEXT: begin
           start <= 0;
-          if (car_count < 12) begin
+          if (car_count < 15) begin
             car_count <= car_count + 1;
             state <= TXCAR;
           end else begin
