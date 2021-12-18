@@ -8,17 +8,17 @@ module bmc_decoder #(
   input wire d_in_1,
   input wire e_in_0,
   input wire enabled,
-  input wire [23:0] system_timestamp,
+  input wire [23:0] sys_ts,
   input wire reset,
 
   output reg [bit_considered-1:0] decoded_data,
   output reg data_availible,
-  output reg [23:0] timestamp_last_data,
+  output reg [23:0] ts_last_data,
 
   output wire state_led
   );
 
-parameter too_fast_counter = 3;
+parameter too_fast_counter = 2;
 parameter fast_counter = 11;
 parameter slow_counter = 11;
 parameter timeout_counter = 24;
@@ -142,7 +142,7 @@ always @ (posedge clk_96MHz) begin
       DATA_AVAILIBLE: begin
         data_availible <= 1;
         decoded_data <= data_buffer;
-        timestamp_last_data <= system_timestamp;
+        ts_last_data <= sys_ts;
         sampling_ena <= 0;
         tick_counter <= 0;
         state <= WAITING_TIME;
