@@ -13,44 +13,29 @@ module bmc_decoder #(
 
   output reg [bit_considered-1:0] decoded_data,
   output reg data_availible,
-  output reg [23:0] ts_last_data,
+  output reg [23:0] ts_last_data
 
-  output wire state_led
   );
 
 parameter too_fast_counter = 2;
 parameter fast_counter = 11;
 parameter slow_counter = 11;
 parameter timeout_counter = 24;
-parameter waiting_ticks = 96000; //1ms 14000; // 146µs
+parameter skip_bits = 2;
 
-localparam  IDLE = 0;
-localparam  START_SAMPLING = 1;
-localparam  SAMPLE = 2;
-localparam  FAST_STATE = 3;
-localparam  SLOW_STATE = 4;
-localparam  ERROR = 5;
-localparam  DATA_AVAILIBLE = 6;
-localparam  WAITING_TIME = 7;
+localparam  SAMPLE = 0;
+localparam  FAST_STATE = 1;
+localparam  SLOW_STATE = 2;
+localparam  ERROR = 3;
+localparam  DATA_AVAILIBLE = 4;
 
 
-reg sampling_ena = 0;
 reg [4:0] tick_counter = 0;
-reg [16:0] wait_counter = 0;
 reg [4:0] nb_bits_recovered = 0;
 reg nb_fast_state = 0;
 reg slow_state_detected = 0;
-reg [2:0] state = IDLE;
+reg [2:0] state = SAMPLE;
 reg [bit_considered-1:0] data_buffer = 0;
-
-reg [4:0] data_availible_counter = 0;
-always @ (posedge clk_96MHz) begin
-  if (state == DATA_AVAILIBLE) begin
-    data_availible_counter <= data_availible_counter + 1;
-  end
-end
-
-assign state_led = data_availible_counter[4];
 
 
 always @ (posedge clk_96MHz) begin
@@ -60,31 +45,8 @@ always @ (posedge clk_96MHz) begin
     end
     case (state)
 
-      IDLE: begin
-        sampling_ena <= 0;
-        if (e_in_0 == 0) begin
-          state <= START_SAMPLING;
-        end
-      end
-
-      START_SAMPLING: begin
-        tick_counter <= 1;
-        nb_bits_recovered <= 0;
-        nb_fast_state <= 0;
-        slow_state_detected <= 0;
-        if (d_in_0 != d_in_1 || sampling_ena) begin
-          if (sampling_ena) begin
-            state <= SAMPLE;
-          end
-          sampling_ena <= 1;
-        end
-        if (e_in_0 == 1) begin
-          state <= ERROR;
-        end
-      end
-
       SAMPLE: begin
-        if (e_in_0 == 1) begin
+        if (tick_counter > timeout_counter) begin
           state <= ERROR;
         end else if (d_in_0 != d_in_1 && tick_counter > too_fast_counter) begin
           if (tick_counter <= fast_counter) begin
@@ -135,26 +97,20 @@ always @ (posedge clk_96MHz) begin
       end
 
       ERROR: begin
-        sampling_ena <= 0;
-        state <= IDLE;
+        tick_counter <= 2;
+        nb_fast_state <= 0;
+        nb_bits_recovered <= 0;
+        slow_state_detected <= 0;
+        state <= SAMPLE;
       end
 
       DATA_AVAILIBLE: begin
         data_availible <= 1;
         decoded_data <= data_buffer;
         ts_last_data <= sys_ts;
-        sampling_ena <= 0;
-        tick_counter <= 0;
-        state <= WAITING_TIME;
-      end
-
-      WAITING_TIME: begin
-        if (wait_counter == waiting_ticks) begin
-          wait_counter <= 0;
-          state <= IDLE;
-        end else begin
-          wait_counter <= wait_counter + 1;
-        end
+        tick_counter <= 2;
+        nb_bits_recovered <= bit_considered - skip_bits;
+        state <= SAMPLE;
       end
 
       default: ;
