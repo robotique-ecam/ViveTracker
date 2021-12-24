@@ -1,56 +1,64 @@
 `default_nettype none
 
-`include "../single_receiver_manager_sim/single_receiver_manager.v"
+`include "../pll_module/pll_module_sim.v"
 `include "../serial_transmitter/serial_transmitter.v"
+`include "../triad_manager/triad_manager_sim.v"
 
 module receivers_top_level_sim (
-  input wire clk_12MHz,
-  input wire clk_96MHz,
-  input wire e_in_0,
-  input wire d_in_0,
-  input wire d_in_1,
+  input wire clk_25MHz,
+  input wire envelop_wire_0,
+  input wire envelop_wire_1,
+  input wire envelop_wire_2,
+  input wire data_wire_0,
+  input wire data_wire_1,
+  input wire data_wire_2,
   output wire tx
   );
+wire state_led;
+wire clk_96MHz;
+wire clk_12MHz;
 
-reg [23:0] system_timestamp = 0;
+pll_module_sim PLLs (
+  .clk_25MHz (clk_25MHz),
+  .clk_96MHz (clk_96MHz),
+  .clk_12MHz (clk_12MHz)
+  );
+
+reg [23:0] sys_ts = 0;
 always @ (posedge clk_96MHz) begin
-  system_timestamp <= system_timestamp + 1;
+  if (&sys_ts) begin
+    sys_ts <= 0;
+  end else begin
+    sys_ts <= sys_ts + 1;
+  end
 end
 
-wire envelop_output_enable;
-wire envelop_output;
+wire reset_pulse_identifier_0;
+wire data_avl_0;
+wire [67:0] triad_data_0;
 
-wire data_output_enable;
-wire data_output;
-
-wire reset;
-wire data_availible;
-wire [16:0] decoded_data;
-wire [23:0] timestamp_last_data;
-
-single_receiver_manager RECV0(
+triad_manager_sim TRIAD0 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_in_0),
-  .d_in_0 (d_in_0),
-  .d_in_1 (d_in_1),
-  .system_timestamp (system_timestamp),
-  .reset (reset),
-  .envelop_output_enable (envelop_output_enable),
-  .envelop_output (envelop_output),
-  .data_output_enable (data_output_enable),
-  .data_output (data_output),
-  .data_availible (data_availible),
-  .decoded_data (decoded_data),
-  .timestamp_last_data (timestamp_last_data)
+  .envelop_wire_0 (envelop_wire_0),
+  .envelop_wire_1 (envelop_wire_1),
+  .envelop_wire_2 (envelop_wire_2),
+  .data_wire_0 (data_wire_0),
+  .data_wire_1 (data_wire_1),
+  .data_wire_2 (data_wire_2),
+  .sys_ts (sys_ts),
+  .reset_pulse_identifier (reset_pulse_identifier_0),
+  .data_avl (data_avl_0),
+  .triad_data (triad_data_0),
+  .state_led (state_led)
   );
+
 
 serial_transmitter UART (
   .clk_12MHz (clk_12MHz),
-  .data_availible (data_availible),
-  .decoded_data (decoded_data),
-  .timestamp_last_data (timestamp_last_data),
+  .data_availible (data_avl_0),
+  .triad_data (triad_data_0),
   .tx (tx),
-  .reset_decoder (reset)
+  .reset_pulse_identifier (reset_pulse_identifier_0)
   );
 
 endmodule // receivers_top_level
