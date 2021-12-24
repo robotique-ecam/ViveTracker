@@ -77,8 +77,7 @@ task random_deviation_state_errored;
 endtask
 
 bmc_decoder #(
-  .bit_considered (bit_considered),
-  .waiting_ticks (3)
+  .bit_considered (bit_considered)
   )
   dut (
   .clk_96MHz (clk),
@@ -86,11 +85,11 @@ bmc_decoder #(
   .d_in_1 (d_in_1),
   .e_in_0 (envelop),
   .enabled (enabled),
-  .system_timestamp (system_timestamp),
+  .sys_ts (system_timestamp),
   .reset (reset),
   .decoded_data (decoded_data),
   .data_availible (data_availible),
-  .timestamp_last_data (timestamp_last_data)
+  .ts_last_data (timestamp_last_data)
   );
 
 always @ (posedge clk) begin
