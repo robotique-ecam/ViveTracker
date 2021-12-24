@@ -91,10 +91,10 @@ inout_face_manager INOUT0 (
   .e_2_in (e_2_in)
   );
 
-wire reset_bmc_decoder_0;
-wire data_avl_0;
-wire [16:0] decoded_data_0;
-wire [23:0] ts_last_data_0;
+wire [7:0] block_wanted_number_0;
+wire [40:0] block_wanted_0;
+wire data_ready_0;
+wire [7:0] avl_blocks_nb_0;
 
 single_receiver_manager RECV0 (
   .clk_96MHz (clk_96MHz),
@@ -102,21 +102,21 @@ single_receiver_manager RECV0 (
   .d_in_0 (d_0_in_0),
   .d_in_1 (d_0_in_1),
   .sys_ts (sys_ts),
-  .reset (reset_bmc_decoder_0),
+  .block_wanted_number (block_wanted_number_0),
   .envelop_output_enable (e_0_oe),
   .envelop_output (e_0_out),
   .data_output_enable (d_0_oe),
   .data_output (d_0_out),
-  .data_availible (data_avl_0),
-  .decoded_data (decoded_data_0),
-  .ts_last_data (ts_last_data_0),
+  .block_wanted (block_wanted_0),
+  .data_ready (data_ready_0),
+  .avl_blocks_nb (avl_blocks_nb_0),
   .state_led (state_led1)
   );
 
-wire reset_bmc_decoder_1;
-wire data_avl_1;
-wire [16:0] decoded_data_1;
-wire [23:0] ts_last_data_1;
+wire [7:0] block_wanted_number_1;
+wire [40:0] block_wanted_1;
+wire data_ready_1;
+wire [7:0] avl_blocks_nb_1;
 
 single_receiver_manager RECV1 (
   .clk_96MHz (clk_96MHz),
@@ -124,21 +124,21 @@ single_receiver_manager RECV1 (
   .d_in_0 (d_1_in_0),
   .d_in_1 (d_1_in_1),
   .sys_ts (sys_ts),
-  .reset (reset_bmc_decoder_1),
+  .block_wanted_number (block_wanted_number_1),
   .envelop_output_enable (e_1_oe),
   .envelop_output (e_1_out),
   .data_output_enable (d_1_oe),
   .data_output (d_1_out),
-  .data_availible (data_avl_1),
-  .decoded_data (decoded_data_1),
-  .ts_last_data (ts_last_data_1),
+  .block_wanted (block_wanted_1),
+  .data_ready (data_ready_1),
+  .avl_blocks_nb (avl_blocks_nb_1),
   .state_led (state_led2)
   );
 
-wire reset_bmc_decoder_2;
-wire data_avl_2;
-wire [16:0] decoded_data_2;
-wire [23:0] ts_last_data_2;
+wire [7:0] block_wanted_number_2;
+wire [40:0] block_wanted_2;
+wire data_ready_2;
+wire [7:0] avl_blocks_nb_2;
 
 single_receiver_manager RECV2 (
   .clk_96MHz (clk_96MHz),
@@ -146,14 +146,14 @@ single_receiver_manager RECV2 (
   .d_in_0 (d_2_in_0),
   .d_in_1 (d_2_in_1),
   .sys_ts (sys_ts),
-  .reset (reset_bmc_decoder_2),
+  .block_wanted_number (block_wanted_number_2),
   .envelop_output_enable (e_2_oe),
   .envelop_output (e_2_out),
   .data_output_enable (d_2_oe),
   .data_output (d_2_out),
-  .data_availible (data_avl_2),
-  .decoded_data (decoded_data_2),
-  .ts_last_data (ts_last_data_2),
+  .block_wanted (block_wanted_2),
+  .data_ready (data_ready_2),
+  .avl_blocks_nb (avl_blocks_nb_2),
   .state_led (state_led3)
   );
 
@@ -165,24 +165,24 @@ wire pulse_identifier_ready;
 
 pulse_identifier PULSE_IDENTIFIER0 (
   .clk_96MHz (clk_96MHz),
-  .data_availible (data_avl_0),
-  .data_availible1 (data_avl_1),
-  .data_availible2 (data_avl_2),
-  .ts_data (ts_last_data_0),
-  .ts_data1 (ts_last_data_1),
-  .ts_data2 (ts_last_data_2),
-  .decoded_data (decoded_data_0),
-  .decoded_data1 (decoded_data_1),
-  .decoded_data2 (decoded_data_2),
+  .block_wanted_0 (block_wanted_0),
+  .block_wanted_1 (block_wanted_1),
+  .block_wanted_2 (block_wanted_2),
+  .data_ready_0 (data_ready_0),
+  .data_ready_1 (data_ready_1),
+  .data_ready_2 (data_ready_2),
+  .avl_blocks_nb_0 (avl_blocks_nb_0),
+  .avl_blocks_nb_1 (avl_blocks_nb_1),
+  .avl_blocks_nb_2 (avl_blocks_nb_2),
   .reset (reset_pulse_identifier),
   .pulse_id_0 (pulse_id_0),
   .pulse_id_1 (pulse_id_1),
   .pulse_id_2 (pulse_id_2),
   .polynomial (polynomial),
-  .reset_bmc_decoder_0 (reset_bmc_decoder_0),
-  .reset_bmc_decoder_1 (reset_bmc_decoder_1),
-  .reset_bmc_decoder_2 (reset_bmc_decoder_2),
   .ready (pulse_identifier_ready),
+  .block_wanted_number_0 (block_wanted_number_0),
+  .block_wanted_number_1 (block_wanted_number_1),
+  .block_wanted_number_2 (block_wanted_number_2),
   .state_led (state_led),
   .sys_ts (sys_ts)
   );
