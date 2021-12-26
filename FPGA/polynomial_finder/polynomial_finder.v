@@ -13,7 +13,7 @@ module polynomial_finder (
   output reg ready
   );
 
-parameter iteration_approx = 3;
+parameter iteration_approx = 2;
 
 localparam  IDLE = 0;
 localparam  ESTIMATE_ITERATION = 1;
@@ -62,12 +62,16 @@ always @ (posedge clk_96MHz) begin
     end
 
     ESTIMATE_ITERATION: begin
-      if (ts_last_data < ts_last_data1) begin
-        estimated_iteration <= (ts_last_data1-ts_last_data)>>4;
+      if (decoded_data == decoded_data1 || ts_last_data == ts_last_data1) begin
+        state <= WAIT_FOR_RESET;
       end else begin
-        estimated_iteration <= (24'hffffff - ts_last_data + ts_last_data1)>>4;
+        if (ts_last_data < ts_last_data1) begin
+          estimated_iteration <= (ts_last_data1-ts_last_data)>>4;
+        end else begin
+          estimated_iteration <= (24'hffffff - ts_last_data + ts_last_data1)>>4;
+        end
+        state <= RUN_LFSR;
       end
-      state <= RUN_LFSR;
     end
 
     RUN_LFSR: begin

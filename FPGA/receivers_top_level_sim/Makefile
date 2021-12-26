@@ -27,12 +27,15 @@ $(TARGET)_tb.vcd: $(OBJS) $(TARGET)_tb.v
 	./$(TARGET)_tb.out
 
 	# To see the simulation in gtkwave
-	gtkwave $@ $(TARGET)_tb.gtkw
+	#gtkwave $@ $(TARGET)_tb.gtkw
 
-
+$(TARGET)_tb.gtkw:
+	gtkwave $(TARGET)_tb.vcd $(TARGET)_tb.gtkw
 
 # Make the simulation given by the test bench
 sim: $(TARGET)_tb.vcd
+
+gtk: $(TARGET)_tb.gtkw
 
 # Compile, then program the SPI memory, then reboot ECP5
 prog: ${TARGET}.svf

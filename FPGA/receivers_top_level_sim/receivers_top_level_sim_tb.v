@@ -18,38 +18,29 @@ localparam FRAME = (BITRATE * 11);
 
 localparam FRAME_WAIT = (BITRATE * 4);
 
-reg clk_96MHz = 1;
-reg clk_12MHz = 1;
+reg clk = 1;
 
 reg [1:0] clk_counter = 0;
 
-reg e_in_0 = 1;
-reg d_in_0 = 0;
-reg d_in_1 = 0;
-reg buffer = 0;
+reg envelop_wire_0 = 0;
+reg envelop_wire_1 = 0;
+reg envelop_wire_2 = 0;
+reg data_wire_0 = 0;
+reg data_wire_1 = 0;
+reg data_wire_2 = 0;
 
 wire tx;
 
-always @ (posedge clk_96MHz) begin
-  if (clk_counter == 3) begin
-    clk_12MHz <= ~clk_12MHz;
-  end
-  clk_counter <= clk_counter + 1;
-end
-
 receivers_top_level_sim dut (
-  .clk_12MHz (clk_12MHz),
-  .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_in_0),
-  .d_in_0 (d_in_0),
-  .d_in_1 (d_in_1),
+  .clk_25MHz (clk),
+  .envelop_wire_0 (envelop_wire_0),
+  .envelop_wire_1 (envelop_wire_1),
+  .envelop_wire_2 (envelop_wire_2),
+  .data_wire_0 (data_wire_0),
+  .data_wire_1 (data_wire_1),
+  .data_wire_2 (data_wire_2),
   .tx (tx)
   );
-
-always @ (posedge clk_96MHz) begin
-  d_in_1 <= buffer;
-  buffer <= d_in_0;
-end
 
 task one_input;
   input [3:0] deviation1;
@@ -58,14 +49,14 @@ task one_input;
   input negative2;
   begin
     if (negative1) begin
-      #(FAST_TRANSITION - deviation1*CLOCK_PERIOD) d_in_0 = ~d_in_0;
+      #(FAST_TRANSITION - deviation1*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
     end else begin
-      #(FAST_TRANSITION + deviation1*CLOCK_PERIOD) d_in_0 = ~d_in_0;
+      #(FAST_TRANSITION + deviation1*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
     end
     if (negative2) begin
-      #(FAST_TRANSITION - deviation2*CLOCK_PERIOD) d_in_0 = ~d_in_0;
+      #(FAST_TRANSITION - deviation2*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
     end else begin
-      #(FAST_TRANSITION + deviation2*CLOCK_PERIOD) d_in_0 = ~d_in_0;
+      #(FAST_TRANSITION + deviation2*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
     end
   end
   endtask
@@ -75,9 +66,9 @@ task zero_input;
   input negative;
   begin
     if (negative) begin
-      #(SLOW_TRANSITION - deviation*CLOCK_PERIOD) d_in_0 = ~d_in_0;
+      #(SLOW_TRANSITION - deviation*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
     end else begin
-      #(SLOW_TRANSITION + deviation*CLOCK_PERIOD) d_in_0 = ~d_in_0;
+      #(SLOW_TRANSITION + deviation*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
     end
   end
   endtask
@@ -92,16 +83,33 @@ task random_deviation_state;
   end
 endtask
 
-always #1 clk_96MHz <= ~clk_96MHz;
+always #1 clk <= ~clk;
+
+reg [1:0] data_wire_used = 0;
+reg wire_data_changing = 0;
+
+always @ (posedge clk) begin
+  if (data_wire_used == 0) begin
+    data_wire_0 <= wire_data_changing;
+  end else if (data_wire_used == 1) begin
+    data_wire_1 <= wire_data_changing;
+  end else begin
+    data_wire_2 <= wire_data_changing;
+  end
+end
 
 initial begin
   $dumpfile("receivers_top_level_sim_tb.vcd");
   $dumpvars(0, receivers_top_level_sim_tb);
 
   #0 $display("start of simulation");
-  #(CLOCK_PERIOD * 10) e_in_0 <= 0;
-  #(CLOCK_PERIOD * 4) d_in_0 = ~d_in_0;
-  #FAST_TRANSITION d_in_0 = ~d_in_0;
+  wire_data_changing <= 0;
+  #20 wire_data_changing = ~wire_data_changing;
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
   one_input(0, 0, 0, 0);
@@ -119,25 +127,60 @@ initial begin
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
   zero_input(0, 0);
-  #(FRAME * 3) one_input(1, 2, 1, 0);
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  random_deviation_state();
-  #(FRAME * 40) $display("End of simulation");
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  #200 data_wire_used <= 2;
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  #(FRAME * 1) $display("End of simulation");
+  #20 $display("End of simulation");
   $finish;
 end
 
