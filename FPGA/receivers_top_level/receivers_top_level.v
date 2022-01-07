@@ -47,9 +47,9 @@ triad_manager TRIAD0 (
   .data_wire_1 (data_wire_1),
   .data_wire_2 (data_wire_2),
   .sys_ts (sys_ts),
-  .reset_pulse_identifier (reset_pulse_identifier_0),
+  .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),
-  .triad_data (triad_data_0),
+  .sensor_iterations (sensor_iterations_0),
   .state_led (state_led)
   );
 
@@ -57,9 +57,9 @@ triad_manager TRIAD0 (
 serial_transmitter UART (
   .clk_12MHz (clk_12MHz),
   .data_availible (data_avl_0),
-  .triad_data (triad_data_0),
+  .sensor_iterations (sensor_iterations_0),
   .tx (tx),
-  .reset_pulse_identifier (reset_pulse_identifier_0)
+  .reset_parser (reset_parser_0)
   );
 
 endmodule // receivers_top_level
