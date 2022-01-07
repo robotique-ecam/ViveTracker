@@ -7,6 +7,7 @@
 
 module triad_manager (
   input wire clk_96MHz,
+  input wire clk_72MHz,
 
   inout wire envelop_wire_0,
   inout wire envelop_wire_1,
@@ -27,6 +28,7 @@ module triad_manager (
 wire state_led1;
 wire state_led2;
 wire state_led3;
+wire state_led4;
 
 wire d_0_oe;
 wire d_0_out;
@@ -110,8 +112,8 @@ single_receiver_manager RECV0 (
   .data_output (d_0_out),
   .block_wanted (block_wanted_0),
   .data_ready (data_ready_0),
-  .avl_blocks_nb (avl_blocks_nb_0),
-  .state_led (state_led1)
+  .avl_blocks_nb (avl_blocks_nb_0)//,
+  //.state_led (state_led)
   );
 
 wire [7:0] block_wanted_number_1;
@@ -165,7 +167,7 @@ wire [16:0] polynomial;
 wire pulse_identifier_ready;
 
 pulse_identifier PULSE_IDENTIFIER0 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .block_wanted_0 (block_wanted_0),
   .block_wanted_1 (block_wanted_1),
   .block_wanted_2 (block_wanted_2),
@@ -184,8 +186,8 @@ pulse_identifier PULSE_IDENTIFIER0 (
   .block_wanted_number_0 (block_wanted_number_0),
   .block_wanted_number_1 (block_wanted_number_1),
   .block_wanted_number_2 (block_wanted_number_2),
-  .state_led (state_led),
-  .sys_ts (sys_ts)
+  .sys_ts (sys_ts),
+  .state_led (state_led)
   );
 
 reg [67:0] triad_data = 0;
@@ -202,7 +204,7 @@ data_parser PARSER0(
   .reset_pulse_identifier (reset_pulse_identifier)
   );
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   if (pulse_identifier_ready) begin
     triad_data_avl <= 1;
     triad_data <= {
@@ -212,6 +214,14 @@ always @ (posedge clk_96MHz) begin
     triad_data_avl <= 0;
   end
 end
+
+reg [23:0] tmp_counter = 0;
+
+//assign state_led = tmp_counter[23];
+
+always @ (posedge clk_96MHz) begin
+  if (avl_blocks_nb_0 == 0) begin
+    tmp_counter <= tmp_counter + 1;
   end
 end
 

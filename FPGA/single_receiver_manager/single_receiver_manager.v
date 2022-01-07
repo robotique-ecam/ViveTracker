@@ -67,7 +67,8 @@ ram_decoded RAM(
   .block_wanted (block_wanted),
   .data_ready (data_ready),
   .reset_bmc_decoder (reset),
-  .avl_blocks_nb (avl_blocks_nb)
+  .avl_blocks_nb (avl_blocks_nb),
+  .state_led (state_led)
   );
 
 reg [23:0] tmp_counter = 0;

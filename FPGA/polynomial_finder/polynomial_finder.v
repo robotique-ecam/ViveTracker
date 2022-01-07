@@ -1,7 +1,7 @@
 `default_nettype none
 
 module polynomial_finder (
-  input wire clk_96MHz,
+  input wire clk_72MHz,
   input wire [23:0] ts_last_data,
   input wire [23:0] ts_last_data1,
   input wire [16:0] decoded_data,
@@ -10,7 +10,8 @@ module polynomial_finder (
 
   output reg [16:0] polynomial,
   output reg [16:0] iteration_number,
-  output reg ready
+  output reg ready,
+  output wire state_led
   );
 
 parameter iteration_approx = 2;
@@ -29,7 +30,7 @@ wire [16:0] value_1D258, value_17E04;
 wire [16:0] iteration_number_1D258, iteration_number_17E04;
 
 lfsr lfsr1(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (17'h1d258),
   .start_data (decoded_data),
   .enable (enable_LFSRs),
@@ -38,7 +39,7 @@ lfsr lfsr1(
   );
 
 lfsr lfsr2(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (17'h17e04),
   .start_data (decoded_data),
   .enable (enable_LFSRs),
@@ -48,7 +49,7 @@ lfsr lfsr2(
 
 reg [16:0] estimated_iteration; //17 bits is for security but it's way to much
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   case (state)
     IDLE: begin
       if (enable == 1) begin
@@ -113,6 +114,22 @@ always @ (posedge clk_96MHz) begin
 
     default: ;
   endcase
+end
+
+reg [3:0] prev_state;
+
+always @ (posedge clk_72MHz) begin
+  prev_state <= state;
+end
+
+reg [23:0] tmp_counter = 23'd0;
+
+assign state_led = tmp_counter[23];
+
+always @ (posedge clk_72MHz) begin
+  if (state != IDLE && state != WAIT_FOR_RESET && enable == 0) begin
+    tmp_counter <= tmp_counter + 1;
+  end
 end
 
 endmodule // polynomial_finder

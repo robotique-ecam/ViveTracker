@@ -18,11 +18,13 @@ module receivers_top_level (
 
 wire clk_96MHz;
 wire clk_12MHz;
+wire clk_72MHz;
 
 pll_module PLLs (
   .clk_25MHz (clk_25MHz),
   .clk_96MHz (clk_96MHz),
-  .clk_12MHz (clk_12MHz)
+  .clk_12MHz (clk_12MHz),
+  .clk_72MHz (clk_72MHz)
   );
 
 reg [23:0] sys_ts = 0;
@@ -34,12 +36,13 @@ always @ (posedge clk_96MHz) begin
   end
 end
 
-wire reset_pulse_identifier_0;
+wire reset_parser_0;
 wire data_avl_0;
-wire [67:0] triad_data_0;
+wire [101:0] sensor_iterations_0;
 
 triad_manager TRIAD0 (
   .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .envelop_wire_0 (envelop_wire_0),
   .envelop_wire_1 (envelop_wire_1),
   .envelop_wire_2 (envelop_wire_2),

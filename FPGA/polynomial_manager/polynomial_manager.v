@@ -3,7 +3,7 @@
 `include "../polynomial_finder/polynomial_finder.v"
 
 module polynomial_manager (
-  input wire clk_96MHz,
+  input wire clk_72MHz,
   input wire [40:0] ram_block_wanted_0,
   input wire [40:0] ram_block_wanted_1,
   input wire ram_data_ready_0,
@@ -18,14 +18,18 @@ module polynomial_manager (
   output reg [16:0] iteration_number,
   output reg [16:0] first_data,
   output reg [23:0] ts_first_data,
-  output reg ready
+  output reg ready,
+  output wire state_led
   );
 
 parameter init_array_file = "../polynomial_manager/init_array.list";
 parameter init_array_file_1 = "../polynomial_manager/init_array1.list";
 parameter wait_for_ticks = 7;
+parameter timeout_ticks = 72000; // 1ms
 
 reg [2:0] wait_for_counter = 0;
+reg [16:0] timeout_counter = 0;
+reg ena_timeout_counter = 0;
 
 localparam  IDLE = 0;
 localparam  HOW_MANY_TO_FETCH = 1;
@@ -68,7 +72,7 @@ wire [16:0] polynomial_0;
 wire [16:0] iteration_number_0;
 wire polynomial_finder_ready_0;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   ts_decoded_data_0_0 <= ts_decoded_data_0[0];
   ts_decoded_data_1_0 <= ts_decoded_data_1[0];
   decoded_data_0_0 <= decoded_data_0[0];
@@ -79,7 +83,7 @@ always @ (posedge clk_96MHz) begin
 end
 
 polynomial_finder POLY_FINDERS0 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .ts_last_data (ts_decoded_data_0_0),
   .ts_last_data1 (ts_decoded_data_1_0),
   .decoded_data (decoded_data_0_0),
@@ -88,21 +92,22 @@ polynomial_finder POLY_FINDERS0 (
 
   .polynomial (polynomial_0),
   .iteration_number (iteration_number_0),
-  .ready (polynomial_finder_ready_0)
+  .ready (polynomial_finder_ready_0),
+  .state_led (state_led)
   );
 
 wire [16:0] polynomial_1;
 wire [16:0] iteration_number_1;
 wire polynomial_finder_ready_1;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   polynomials[1] <= polynomial_1;
   iteration_numbers[1] <= iteration_number_1;
   polynomial_finders_ready[1] <= polynomial_finder_ready_1;
 end
 
 polynomial_finder POLY_FINDERS1 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .ts_last_data (ts_decoded_data_0[1]),
   .ts_last_data1 (ts_decoded_data_1[1]),
   .decoded_data (decoded_data_0[1]),
@@ -118,14 +123,14 @@ wire [16:0] polynomial_2;
 wire [16:0] iteration_number_2;
 wire polynomial_finder_ready_2;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   polynomials[2] <= polynomial_2;
   iteration_numbers[2] <= iteration_number_2;
   polynomial_finders_ready[2] <= polynomial_finder_ready_2;
 end
 
 polynomial_finder POLY_FINDERS2 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .ts_last_data (ts_decoded_data_0[2]),
   .ts_last_data1 (ts_decoded_data_1[2]),
   .decoded_data (decoded_data_0[2]),
@@ -141,14 +146,14 @@ wire [16:0] polynomial_3;
 wire [16:0] iteration_number_3;
 wire polynomial_finder_ready_3;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   polynomials[3] <= polynomial_3;
   iteration_numbers[3] <= iteration_number_3;
   polynomial_finders_ready[3] <= polynomial_finder_ready_3;
 end
 
 polynomial_finder POLY_FINDERS3 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .ts_last_data (ts_decoded_data_0[3]),
   .ts_last_data1 (ts_decoded_data_1[3]),
   .decoded_data (decoded_data_0[3]),
@@ -167,7 +172,7 @@ initial begin
   $readmemh(init_array_file_1, ts_decoded_data_1);
 end
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   if (avl_blocks_nb_0 <= avl_blocks_nb_1) begin
     smallest_blocks_avl <= avl_blocks_nb_0;
   end else begin
@@ -175,11 +180,20 @@ always @ (posedge clk_96MHz) begin
   end
 end
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
+  if (ena_timeout_counter) begin
+    timeout_counter <= timeout_counter + 1;
+  end else begin
+    timeout_counter <= 0;
+  end
+end
+
+always @ (posedge clk_72MHz) begin
   case (state)
 
     IDLE: begin
       if (enable) begin
+        ena_timeout_counter <= 1;
         ready <= 0;
         state <= HOW_MANY_TO_FETCH;
       end else begin
@@ -267,6 +281,8 @@ always @ (posedge clk_96MHz) begin
       end else if (polynomials[3] != 0 && polynomial_finders_ready[3]) begin
         retrieved_poly_index <= 3;
         state <= WAIT_FOR_RESET;
+      end else if (timeout_counter > timeout_ticks) begin
+        state <= WAIT_FOR_RESET;
       end
     end
 
@@ -283,6 +299,7 @@ always @ (posedge clk_96MHz) begin
         $readmemh(init_array_file_1, ts_decoded_data_1);
       end else begin
         ready <= 1;
+        ena_timeout_counter <= 0;
         polynomial <= polynomials[retrieved_poly_index];
         iteration_number <= iteration_numbers[retrieved_poly_index];
         first_data <= decoded_data_0[retrieved_poly_index];
@@ -294,6 +311,23 @@ always @ (posedge clk_96MHz) begin
       state <= IDLE;
     end
   endcase
+end
+
+
+reg [3:0] prev_state;
+
+always @ (posedge clk_72MHz) begin
+  prev_state <= state;
+end
+
+reg [23:0] tmp_counter = 23'd0;
+
+//assign state_led = tmp_counter[6];
+
+always @ (posedge clk_72MHz) begin
+  if (state == WAIT_FOR_RESET && timeout_counter > timeout_ticks && prev_state == RUN_POLYNOMIAL_FINDERS) begin
+    tmp_counter <= tmp_counter + 1;
+  end
 end
 
 endmodule // polynomial_manager
