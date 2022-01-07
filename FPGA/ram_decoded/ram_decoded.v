@@ -10,7 +10,8 @@ module ram_decoded (
   output reg [40:0] block_wanted,
   output reg data_ready,
   output reg reset_bmc_decoder,
-  output reg [7:0] avl_blocks_nb
+  output reg [7:0] avl_blocks_nb,
+  output wire state_led
   );
 
 parameter dump_ticks = 96000; //1ms in a 96MHz clock
@@ -68,8 +69,10 @@ always @ (posedge clk_96MHz) begin
     end
 
     STORE: begin
-      ram[avl_blocks_nb] <= block_to_store;
-      avl_blocks_nb <= avl_blocks_nb + 1;
+      if (avl_blocks_nb < 196) begin
+        ram[avl_blocks_nb] <= block_to_store;
+        avl_blocks_nb <= avl_blocks_nb + 1;
+      end
       state_1 <= WAIT_FOR_DUMP;
     end
 
@@ -120,6 +123,22 @@ always @ (posedge clk_96MHz) begin
       end
     end
   endcase
+end
+
+reg [3:0] prev_state;
+
+always @ (posedge clk_96MHz) begin
+  prev_state <= state_2;
+end
+
+reg [23:0] tmp_counter = 23'd0;
+
+assign state_led = tmp_counter[6];
+
+always @ (posedge clk_96MHz) begin
+  if (state_2 == FETCHING_DATA && block_wanted_number > avl_blocks_nb) begin
+    tmp_counter <= tmp_counter + 1;
+  end
 end
 
 endmodule // ram_decoded
