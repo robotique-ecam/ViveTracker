@@ -49,14 +49,14 @@ task one_input;
   input negative2;
   begin
     if (negative1) begin
-      #(FAST_TRANSITION - deviation1*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
+      #(FAST_TRANSITION - deviation1*CLOCK_PERIOD) wire_data_changing <= ~wire_data_changing;
     end else begin
-      #(FAST_TRANSITION + deviation1*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
+      #(FAST_TRANSITION + deviation1*CLOCK_PERIOD) wire_data_changing <= ~wire_data_changing;
     end
     if (negative2) begin
-      #(FAST_TRANSITION - deviation2*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
+      #(FAST_TRANSITION - deviation2*CLOCK_PERIOD) wire_data_changing <= ~wire_data_changing;
     end else begin
-      #(FAST_TRANSITION + deviation2*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
+      #(FAST_TRANSITION + deviation2*CLOCK_PERIOD) wire_data_changing <= ~wire_data_changing;
     end
   end
   endtask
@@ -66,9 +66,9 @@ task zero_input;
   input negative;
   begin
     if (negative) begin
-      #(SLOW_TRANSITION - deviation*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
+      #(SLOW_TRANSITION - deviation*CLOCK_PERIOD) wire_data_changing <= ~wire_data_changing;
     end else begin
-      #(SLOW_TRANSITION + deviation*CLOCK_PERIOD) wire_data_changing = ~wire_data_changing;
+      #(SLOW_TRANSITION + deviation*CLOCK_PERIOD) wire_data_changing <= ~wire_data_changing;
     end
   end
   endtask
@@ -104,13 +104,7 @@ initial begin
 
   #0 $display("start of simulation");
   wire_data_changing <= 0;
-  #20 wire_data_changing = ~wire_data_changing;
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
+  #20 wire_data_changing <= ~wire_data_changing;
   zero_input(0, 0);
   one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
@@ -119,19 +113,7 @@ initial begin
   zero_input(0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
-  zero_input(0, 0);
   one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  zero_input(0, 0);
-  zero_input(0, 0);
-  zero_input(0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  zero_input(0, 0);
   one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
@@ -139,8 +121,95 @@ initial begin
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
   zero_input(0, 0);
-  #200 data_wire_used <= 2;
   one_input(0, 0, 0, 0);
+  wire_data_changing <= ~wire_data_changing;
+  #SLOW_TRANSITION data_wire_used <= 2;
+  if (wire_data_changing != 0) begin
+    wire_data_changing <= 0;
+  end
+  #(SLOW_TRANSITION*(499 - 17)) wire_data_changing <= ~wire_data_changing;
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  wire_data_changing <= ~wire_data_changing;
+  #SLOW_TRANSITION data_wire_used <= 1;
+  if (wire_data_changing != 0) begin
+    wire_data_changing <= 0;
+  end
+  #(SLOW_TRANSITION*15 - 1) wire_data_changing <= ~wire_data_changing;
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  wire_data_changing <= ~wire_data_changing;
+
+
+
+  #SLOW_TRANSITION data_wire_used <= 2;
+  if (wire_data_changing != 0) begin
+    wire_data_changing <= 0;
+  end
+  #(SLOW_TRANSITION*(15000-17-15-1)) wire_data_changing <= ~wire_data_changing;
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  wire_data_changing <= ~wire_data_changing;
+  #SLOW_TRANSITION data_wire_used <= 1;
+  if (wire_data_changing != 0) begin
+    wire_data_changing <= 0;
+  end
+  #(SLOW_TRANSITION*(500 - 1-17)) wire_data_changing <= ~wire_data_changing;
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  one_input(0, 0, 0, 0);
+  zero_input(0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
   one_input(0, 0, 0, 0);
@@ -150,23 +219,17 @@ initial begin
   zero_input(0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
+  one_input(0, 0, 0, 0);
+  wire_data_changing <= ~wire_data_changing;
+  #SLOW_TRANSITION data_wire_used <= 0;
+  if (wire_data_changing != 0) begin
+    wire_data_changing <= 0;
+  end
+  #(SLOW_TRANSITION*15) wire_data_changing <= ~wire_data_changing;
   zero_input(0, 0);
   one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  one_input(0, 0, 0, 0);
-  zero_input(0, 0);
-  zero_input(0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
   zero_input(0, 0);
@@ -174,12 +237,14 @@ initial begin
   one_input(0, 0, 0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
+  zero_input(0, 0);
+  zero_input(0, 0);
   one_input(0, 0, 0, 0);
   zero_input(0, 0);
   zero_input(0, 0);
   zero_input(0, 0);
-  zero_input(0, 0);
-  #(FRAME * 1) $display("End of simulation");
+  wire_data_changing <= ~wire_data_changing;
+  #(FRAME * 30) $display("End of simulation");
   #20 $display("End of simulation");
   $finish;
 end
