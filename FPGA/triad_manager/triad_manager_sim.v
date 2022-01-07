@@ -3,6 +3,7 @@
 `include "../inout_face_manager/inout_face_manager_sim.v"
 `include "../single_receiver_manager/single_receiver_manager_sim.v"
 `include "../pulse_identifier/pulse_identifier.v"
+`include "../data_parser/data_parser.v"
 
 module triad_manager_sim (
   input wire clk_96MHz,
@@ -16,10 +17,10 @@ module triad_manager_sim (
   input wire data_wire_2,
 
   input wire [23:0] sys_ts,
-  input wire reset_pulse_identifier,
+  input wire reset_parser,
 
-  output reg data_avl,
-  output reg [67:0] triad_data,
+  output wire data_avl,
+  output wire [101:0] sensor_iterations,
 
   output wire state_led
   );
@@ -148,29 +149,31 @@ pulse_identifier #(.waiting_ticks_after_second_pulses(100)) PULSE_IDENTIFIER0 (
   .block_wanted_number_0 (block_wanted_number_0),
   .block_wanted_number_1 (block_wanted_number_1),
   .block_wanted_number_2 (block_wanted_number_2),
-  .state_led (state_led),
   .sys_ts (sys_ts)
   );
 
+reg [67:0] triad_data = 0;
+reg triad_data_avl = 0;
+wire reset_pulse_identifier;
+
+data_parser PARSER0(
+  .clk_96MHz (clk_96MHz),
+  .triad_data (triad_data),
+  .triad_data_avl (triad_data_avl),
+  .reset_parser (reset_parser),
+  .sensor_iterations (sensor_iterations),
+  .sensor_data_avl (data_avl),
+  .reset_pulse_identifier (reset_pulse_identifier)
+  );
 
 always @ (posedge clk_96MHz) begin
   if (pulse_identifier_ready) begin
-    data_avl <= 1;
+    triad_data_avl <= 1;
     triad_data <= {
       pulse_id_2, pulse_id_1, pulse_id_0, polynomial
     };
   end else begin
-    data_avl <= 0;
-  end
-end
-
-reg [23:0] tmp_counter = 0;
-
-//assign state_led = tmp_counter[23];
-
-always @ (posedge clk_96MHz) begin
-  if (avl_blocks_nb_0 == 0) begin
-    tmp_counter <= tmp_counter + 1;
+    triad_data_avl <= 0;
   end
 end
 
