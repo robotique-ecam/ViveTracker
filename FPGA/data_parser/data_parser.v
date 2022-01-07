@@ -7,8 +7,7 @@ module data_parser (
   input wire reset_parser,
   output reg [101:0] sensor_iterations,
   output reg sensor_data_avl,
-  output reg reset_pulse_identifier,
-  output wire state_led
+  output reg reset_pulse_identifier
   );
 
 parameter min_diff_between_iteration = 7500;
@@ -92,24 +91,6 @@ always @ (posedge clk_72MHz) begin
 
     default: ;
   endcase
-end
-
-reg [3:0] prev_state;
-
-always @ (posedge clk_72MHz) begin
-  prev_state <= state;
-end
-
-reg [25:0] tmp_counter = 23'd0;
-
-assign state_led = tmp_counter[25];
-
-always @ (posedge clk_72MHz) begin
-  if (state == WAIT_FOR_DATA/* && prev_state == STORE*/) begin
-    tmp_counter <= tmp_counter + 1;
-  end else begin
-    tmp_counter <= 0;
-  end
 end
 
 endmodule // data_parser

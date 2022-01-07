@@ -199,8 +199,7 @@ data_parser PARSER0(
   .reset_parser (reset_parser),
   .sensor_iterations (sensor_iterations),
   .sensor_data_avl (data_avl),
-  .reset_pulse_identifier (reset_pulse_identifier)//,
-  //.state_led (state_led)
+  .reset_pulse_identifier (reset_pulse_identifier)
   );
 
 always @ (posedge clk_96MHz) begin
