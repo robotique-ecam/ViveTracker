@@ -21,8 +21,6 @@ module single_receiver_manager (
   output wire [40:0] block_wanted,
   output wire data_ready,
   output wire [7:0] avl_blocks_nb,
-
-  output wire state_led
   );
 
 wire configured;
@@ -67,18 +65,7 @@ ram_decoded RAM(
   .block_wanted (block_wanted),
   .data_ready (data_ready),
   .reset_bmc_decoder (reset),
-  .avl_blocks_nb (avl_blocks_nb),
-  .state_led (state_led)
+  .avl_blocks_nb (avl_blocks_nb)
   );
-
-reg [23:0] tmp_counter = 0;
-
-//assign state_led = tmp_counter[23];
-
-always @ (posedge clk_96MHz) begin
-  if (avl_blocks_nb == 0) begin
-    tmp_counter <= tmp_counter + 1;
-  end
-end
 
 endmodule // single_receiver_manager

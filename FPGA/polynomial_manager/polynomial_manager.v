@@ -18,8 +18,7 @@ module polynomial_manager (
   output reg [16:0] iteration_number,
   output reg [16:0] first_data,
   output reg [23:0] ts_first_data,
-  output reg ready,
-  output wire state_led
+  output reg ready
   );
 
 parameter init_array_file = "../polynomial_manager/init_array.list";
@@ -92,8 +91,7 @@ polynomial_finder POLY_FINDERS0 (
 
   .polynomial (polynomial_0),
   .iteration_number (iteration_number_0),
-  .ready (polynomial_finder_ready_0),
-  .state_led (state_led)
+  .ready (polynomial_finder_ready_0)
   );
 
 wire [16:0] polynomial_1;
@@ -311,23 +309,6 @@ always @ (posedge clk_72MHz) begin
       state <= IDLE;
     end
   endcase
-end
-
-
-reg [3:0] prev_state;
-
-always @ (posedge clk_72MHz) begin
-  prev_state <= state;
-end
-
-reg [23:0] tmp_counter = 23'd0;
-
-//assign state_led = tmp_counter[6];
-
-always @ (posedge clk_72MHz) begin
-  if (state == WAIT_FOR_RESET && timeout_counter > timeout_ticks && prev_state == RUN_POLYNOMIAL_FINDERS) begin
-    tmp_counter <= tmp_counter + 1;
-  end
 end
 
 endmodule // polynomial_manager

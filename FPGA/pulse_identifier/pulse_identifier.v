@@ -24,8 +24,7 @@ module pulse_identifier (
   output reg [7:0] block_wanted_number_1,
   output reg [7:0] block_wanted_number_2,
 
-  input wire [23:0] sys_ts,
-  output wire state_led
+  input wire [23:0] sys_ts
   );
 
 parameter timeout_ticks = 72000; //~1ms in a 72MHz clock frequency
@@ -144,8 +143,7 @@ polynomial_manager POLY_MANAGER(
   .iteration_number (iteration_between_first_second),
   .first_data (first_data),
   .ts_first_data (ts_first_data),
-  .ready (polynomial_manager_ready),
-  .state_led (state_led)
+  .ready (polynomial_manager_ready)
   );
 
 reg offset_finder_enable;
@@ -163,13 +161,10 @@ offset_finder OFFSET_FINDER0(
 
 always @ (posedge clk_72MHz) begin
   if (third_sensor == 0 && (|avl_blocks_nb_0 && ts_third_data == 0) && waiting_timer != timeout_ticks) begin
-    //data_spotted[0] <= 1;
     ts_third_data <= sys_ts;
   end else if (third_sensor == 1 && (|avl_blocks_nb_1 && ts_third_data == 0) && waiting_timer != timeout_ticks) begin
-    //data_spotted[1] <= 1;
     ts_third_data <= sys_ts;
   end else if (third_sensor == 2 && (|avl_blocks_nb_2 && ts_third_data == 0) && waiting_timer != timeout_ticks) begin
-    //data_spotted[2] <= 1;
     ts_third_data <= sys_ts;
   end else if (third_sensor == 3) begin
     ts_third_data <= 0;
@@ -355,24 +350,6 @@ always @ (posedge clk_72MHz) begin
 
     default: ;
   endcase
-end
-
-reg [3:0] prev_state;
-
-always @ (posedge clk_72MHz) begin
-  prev_state <= state;
-end
-
-reg [23:0] tmp_counter = 23'd0;
-
-//assign state_led = tmp_counter[6];
-
-always @ (posedge clk_72MHz) begin
-  if (state == WAIT_FOR_ALL_RAM_DUMP && prev_state == OFFSET_IDENTIFICATION) begin
-    tmp_counter <= tmp_counter + 1;
-  end/* else begin
-    tmp_counter <= 0;
-  end*/
 end
 
 endmodule // pulse_identifier

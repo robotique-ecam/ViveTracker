@@ -12,8 +12,7 @@ module receivers_top_level (
   inout wire data_wire_0,
   inout wire data_wire_1,
   inout wire data_wire_2,
-  output wire tx,
-  output wire state_led
+  output wire tx
   );
 
 wire clk_96MHz;
@@ -52,8 +51,7 @@ triad_manager TRIAD0 (
   .sys_ts (sys_ts),
   .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),
-  .sensor_iterations (sensor_iterations_0),
-  .state_led (state_led)
+  .sensor_iterations (sensor_iterations_0)
   );
 
 

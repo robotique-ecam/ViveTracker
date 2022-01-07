@@ -10,8 +10,7 @@ module polynomial_finder (
 
   output reg [16:0] polynomial,
   output reg [16:0] iteration_number,
-  output reg ready,
-  output wire state_led
+  output reg ready
   );
 
 parameter iteration_approx = 2;
@@ -114,22 +113,6 @@ always @ (posedge clk_72MHz) begin
 
     default: ;
   endcase
-end
-
-reg [3:0] prev_state;
-
-always @ (posedge clk_72MHz) begin
-  prev_state <= state;
-end
-
-reg [23:0] tmp_counter = 23'd0;
-
-assign state_led = tmp_counter[23];
-
-always @ (posedge clk_72MHz) begin
-  if (state != IDLE && state != WAIT_FOR_RESET && enable == 0) begin
-    tmp_counter <= tmp_counter + 1;
-  end
 end
 
 endmodule // polynomial_finder
