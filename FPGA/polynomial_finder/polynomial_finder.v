@@ -76,13 +76,18 @@ always @ (posedge clk_96MHz) begin
 
     RUN_LFSR: begin
       enable_LFSRs <= 1;
-      if (iteration_number_1D258 > (estimated_iteration - iteration_approx - 1)) begin
+      if (~enable) begin
+        state <= WAIT_FOR_RESET;
+      end else if (iteration_number_1D258 > (estimated_iteration - iteration_approx - 1)) begin
         state <= IDENTIFY_POLYNOMIAL;
       end
     end
 
     IDENTIFY_POLYNOMIAL: begin
-      if (value_1D258 == decoded_data1) begin
+      if (~enable) begin
+        enable_LFSRs <= 0;
+        state <= WAIT_FOR_RESET;
+      end else if (value_1D258 == decoded_data1) begin
         polynomial <= 17'h1d258;
         iteration_number <= iteration_number_1D258;
         enable_LFSRs <= 0;
