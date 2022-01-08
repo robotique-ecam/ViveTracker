@@ -48,7 +48,7 @@ always @ (posedge clk_96MHz) begin
       SAMPLE: begin
         if (tick_counter > timeout_counter) begin
           state <= ERROR;
-        end else if (d_in_0 != d_in_1 && tick_counter > too_fast_counter) begin
+        end else if (d_in_0 != d_in_1 && tick_counter > too_fast_counter && !e_in_0) begin
           if (tick_counter <= fast_counter) begin
             state <= FAST_STATE;
           end else if (tick_counter <= timeout_counter && tick_counter > slow_counter) begin

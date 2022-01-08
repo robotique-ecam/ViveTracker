@@ -1,7 +1,7 @@
 `default_nettype none
 
 module lfsr (
-  input wire clk_96MHz,
+  input wire clk_72MHz,
   input wire [16:0] polynomial,
   input wire [16:0] start_data,
   input wire enable,
@@ -17,7 +17,7 @@ localparam  ITERATE = 2;
 reg [1:0] state = IDLE;
 reg binary_bit;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   case (state)
     IDLE: begin
       if (enable == 1) begin

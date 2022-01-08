@@ -2,7 +2,7 @@
 `include "../lfsr/lfsr.v"
 
 module offset_finder (
-  input wire clk_96MHz,
+  input wire clk_72MHz,
   input wire [16:0] polynomial,
   input wire [16:0] data,
   input wire enable,
@@ -38,7 +38,7 @@ wire [16:0] iteration_number_3;
 reg enable_LFSRs = 0;
 
 lfsr LFSR_0 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (polynomial),
   .start_data (17'h1),
   .enable (enable_LFSRs),
@@ -47,7 +47,7 @@ lfsr LFSR_0 (
   );
 
 lfsr LFSR_1 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (polynomial),
   .start_data (start_data_1),
   .enable (enable_LFSRs),
@@ -56,7 +56,7 @@ lfsr LFSR_1 (
   );
 
 lfsr LFSR_2 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (polynomial),
   .start_data (start_data_2),
   .enable (enable_LFSRs),
@@ -65,7 +65,7 @@ lfsr LFSR_2 (
   );
 
 lfsr LFSR_3 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (polynomial),
   .start_data (start_data_3),
   .enable (enable_LFSRs),
@@ -74,7 +74,7 @@ lfsr LFSR_3 (
   );
 
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   case (state)
     IDLE: begin
       if (enable == 1) begin

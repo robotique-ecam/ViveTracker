@@ -7,6 +7,7 @@
 
 module triad_manager (
   input wire clk_96MHz,
+  input wire clk_72MHz,
 
   inout wire envelop_wire_0,
   inout wire envelop_wire_1,
@@ -20,13 +21,8 @@ module triad_manager (
   input wire reset_parser,
 
   output wire data_avl,
-  output wire [101:0] sensor_iterations,
-
-  output wire state_led
+  output wire [101:0] sensor_iterations
   );
-wire state_led1;
-wire state_led2;
-wire state_led3;
 
 wire d_0_oe;
 wire d_0_out;
@@ -110,8 +106,7 @@ single_receiver_manager RECV0 (
   .data_output (d_0_out),
   .block_wanted (block_wanted_0),
   .data_ready (data_ready_0),
-  .avl_blocks_nb (avl_blocks_nb_0),
-  .state_led (state_led1)
+  .avl_blocks_nb (avl_blocks_nb_0)
   );
 
 wire [7:0] block_wanted_number_1;
@@ -132,8 +127,7 @@ single_receiver_manager RECV1 (
   .data_output (d_1_out),
   .block_wanted (block_wanted_1),
   .data_ready (data_ready_1),
-  .avl_blocks_nb (avl_blocks_nb_1),
-  .state_led (state_led2)
+  .avl_blocks_nb (avl_blocks_nb_1)
   );
 
 wire [7:0] block_wanted_number_2;
@@ -154,8 +148,7 @@ single_receiver_manager RECV2 (
   .data_output (d_2_out),
   .block_wanted (block_wanted_2),
   .data_ready (data_ready_2),
-  .avl_blocks_nb (avl_blocks_nb_2),
-  .state_led (state_led3)
+  .avl_blocks_nb (avl_blocks_nb_2)
   );
 
 wire [16:0] pulse_id_0;
@@ -165,7 +158,7 @@ wire [16:0] polynomial;
 wire pulse_identifier_ready;
 
 pulse_identifier PULSE_IDENTIFIER0 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .block_wanted_0 (block_wanted_0),
   .block_wanted_1 (block_wanted_1),
   .block_wanted_2 (block_wanted_2),
@@ -184,7 +177,6 @@ pulse_identifier PULSE_IDENTIFIER0 (
   .block_wanted_number_0 (block_wanted_number_0),
   .block_wanted_number_1 (block_wanted_number_1),
   .block_wanted_number_2 (block_wanted_number_2),
-  .state_led (state_led),
   .sys_ts (sys_ts)
   );
 
@@ -202,7 +194,7 @@ data_parser PARSER0(
   .reset_pulse_identifier (reset_pulse_identifier)
   );
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   if (pulse_identifier_ready) begin
     triad_data_avl <= 1;
     triad_data <= {
@@ -210,8 +202,6 @@ always @ (posedge clk_96MHz) begin
     };
   end else begin
     triad_data_avl <= 0;
-  end
-end
   end
 end
 

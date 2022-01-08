@@ -3,7 +3,7 @@
 `include "../offset_finder/offset_finder.v"
 
 module pulse_identifier (
-  input wire clk_96MHz,
+  input wire clk_72MHz,
   input wire [40:0] block_wanted_0,
   input wire [40:0] block_wanted_1,
   input wire [40:0] block_wanted_2,
@@ -27,8 +27,8 @@ module pulse_identifier (
   input wire [23:0] sys_ts
   );
 
-parameter timeout_ticks = 50000; //~1ms in a 96MHz clock frequency
-parameter waiting_ticks_after_second_pulses = 5000; //~50µs in a 96MHz clock frequency
+parameter timeout_ticks = 72000; //~1ms in a 72MHz clock frequency
+parameter waiting_ticks_after_second_pulses = 3750; //~50µs in a 72MHz clock frequency
 
 localparam  WAITING_FOR_DATA = 0;
 localparam  STORING_NEW_DATA = 1;
@@ -40,6 +40,7 @@ localparam  OFFSET_IDENTIFICATION = 6;
 localparam  DATA_READY = 7;
 localparam  WAIT_FOR_LAST_DUMP = 8;
 localparam  ERROR_OR_RESET = 9;
+localparam  WAIT_FOR_ALL_RAM_DUMP = 10;
 
 reg [3:0] state = ERROR_OR_RESET;
 
@@ -55,7 +56,7 @@ reg [16:0] waiting_timer;
 reg enable_waiting_timer;
 reg [12:0] wait_for_timer = 0;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   if (enable_waiting_timer == 1 && waiting_timer != timeout_ticks) begin
     waiting_timer <= waiting_timer + 1;
   end else if (enable_waiting_timer == 0) begin
@@ -66,7 +67,7 @@ end
 reg [7:0] avl_blocks_nb [2:0];
 reg [7:0] avl_blocks_nb_first, avl_blocks_nb_second;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   avl_blocks_nb[0] <= avl_blocks_nb_0;
   avl_blocks_nb[1] <= avl_blocks_nb_1;
   avl_blocks_nb[2] <= avl_blocks_nb_2;
@@ -77,7 +78,7 @@ end
 reg [40:0] block_wanted [2:0];
 reg [40:0] block_wanted_first, block_wanted_second;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   block_wanted[0] <= block_wanted_0;
   block_wanted[1] <= block_wanted_1;
   block_wanted[2] <= block_wanted_2;
@@ -89,7 +90,7 @@ end
 reg [2:0] ram_data_ready;
 reg ram_data_ready_first, ram_data_ready_second;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   ram_data_ready[0] <= data_ready_0;
   ram_data_ready[1] <= data_ready_1;
   ram_data_ready[2] <= data_ready_2;
@@ -101,7 +102,7 @@ reg [7:0] block_wanted_nb [2:0];
 wire [7:0] poly_mana_block_wanted_nb_0;
 wire [7:0] poly_mana_block_wanted_nb_1;
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   if (first_sensor != second_sensor && second_sensor != third_sensor
     && third_sensor != first_sensor && third_sensor !=3) begin
       block_wanted_nb[first_sensor] <= poly_mana_block_wanted_nb_0;
@@ -127,7 +128,7 @@ wire [16:0] first_data;
 wire [23:0] ts_first_data;
 
 polynomial_manager POLY_MANAGER(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .ram_block_wanted_0 (block_wanted_first),
   .ram_block_wanted_1 (block_wanted_second),
   .ram_data_ready_0 (ram_data_ready_first),
@@ -150,7 +151,7 @@ wire [16:0] offset_first_pulse;
 wire offset_finder_ready;
 
 offset_finder OFFSET_FINDER0(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (polynomial),
   .data (first_data),
   .enable (offset_finder_enable),
@@ -158,22 +159,19 @@ offset_finder OFFSET_FINDER0(
   .ready (offset_finder_ready)
   );
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   if (third_sensor == 0 && (|avl_blocks_nb_0 && ts_third_data == 0) && waiting_timer != timeout_ticks) begin
-    //data_spotted[0] <= 1;
     ts_third_data <= sys_ts;
   end else if (third_sensor == 1 && (|avl_blocks_nb_1 && ts_third_data == 0) && waiting_timer != timeout_ticks) begin
-    //data_spotted[1] <= 1;
     ts_third_data <= sys_ts;
   end else if (third_sensor == 2 && (|avl_blocks_nb_2 && ts_third_data == 0) && waiting_timer != timeout_ticks) begin
-    //data_spotted[2] <= 1;
     ts_third_data <= sys_ts;
   end else if (third_sensor == 3) begin
     ts_third_data <= 0;
   end
 end
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   case (state)
     WAITING_FOR_DATA: begin
       if (waiting_timer == timeout_ticks) begin
@@ -246,7 +244,7 @@ always @ (posedge clk_96MHz) begin
       if (polynomial_manager_ready == 1) begin
         if (wait_for_module_activation) begin
         end else if (polynomial == 0) begin
-          state <= ERROR_OR_RESET;
+          state <= WAIT_FOR_ALL_RAM_DUMP;
         end else begin
           state <= WAITING_FOR_LAST_DATA;
         end
@@ -266,7 +264,7 @@ always @ (posedge clk_96MHz) begin
         wait_for_module_activation <= 1;
         state <= OFFSET_IDENTIFICATION;
       end else if (waiting_timer == timeout_ticks) begin
-        state <= ERROR_OR_RESET;
+        state <= WAIT_FOR_ALL_RAM_DUMP;
       end
     end
 
@@ -302,7 +300,7 @@ always @ (posedge clk_96MHz) begin
 
           state <= DATA_READY;
         end else begin
-          state <= ERROR_OR_RESET;
+          state <= WAIT_FOR_ALL_RAM_DUMP;
         end
       end else if (wait_for_module_activation == 1 && offset_finder_ready == 0) begin
         wait_for_module_activation <= 0;
@@ -338,6 +336,16 @@ always @ (posedge clk_96MHz) begin
       data_spotted <= 0;
       wait_for_timer <= 0;
       state <= WAITING_FOR_DATA;
+    end
+
+    WAIT_FOR_ALL_RAM_DUMP: begin
+      if (third_sensor != 3) begin
+        if (avl_blocks_nb[first_sensor] == 0 && avl_blocks_nb[second_sensor] == 0 && avl_blocks_nb[third_sensor] == 0) begin
+          state <= ERROR_OR_RESET;
+        end
+      end else if (avl_blocks_nb[first_sensor] == 0 && avl_blocks_nb[second_sensor] == 0) begin
+        state <= ERROR_OR_RESET;
+      end
     end
 
     default: ;

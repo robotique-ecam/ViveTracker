@@ -1,8 +1,9 @@
+`timescale 1s/ 1ms
 `include "../uart_tx_module/baudgen.vh"
 
 module receivers_top_level_sim_tb ();
 
-localparam  CLOCK_TICK = 1; //((1/(96))/2) * PRESCALER;
+localparam  CLOCK_TICK = 0.999; //((1/(96))/2) * PRESCALER;
 
 localparam  CLOCK_PERIOD = 2*CLOCK_TICK;
 
@@ -83,7 +84,7 @@ task random_deviation_state;
   end
 endtask
 
-always #1 clk <= ~clk;
+always #0.333 clk <= ~clk;
 
 reg [1:0] data_wire_used = 0;
 reg wire_data_changing = 0;

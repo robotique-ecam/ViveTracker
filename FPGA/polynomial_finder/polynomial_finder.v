@@ -1,7 +1,7 @@
 `default_nettype none
 
 module polynomial_finder (
-  input wire clk_96MHz,
+  input wire clk_72MHz,
   input wire [23:0] ts_last_data,
   input wire [23:0] ts_last_data1,
   input wire [16:0] decoded_data,
@@ -29,7 +29,7 @@ wire [16:0] value_1D258, value_17E04;
 wire [16:0] iteration_number_1D258, iteration_number_17E04;
 
 lfsr lfsr1(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (17'h1d258),
   .start_data (decoded_data),
   .enable (enable_LFSRs),
@@ -38,7 +38,7 @@ lfsr lfsr1(
   );
 
 lfsr lfsr2(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .polynomial (17'h17e04),
   .start_data (decoded_data),
   .enable (enable_LFSRs),
@@ -48,7 +48,7 @@ lfsr lfsr2(
 
 reg [16:0] estimated_iteration; //17 bits is for security but it's way to much
 
-always @ (posedge clk_96MHz) begin
+always @ (posedge clk_72MHz) begin
   case (state)
     IDLE: begin
       if (enable == 1) begin
@@ -76,13 +76,18 @@ always @ (posedge clk_96MHz) begin
 
     RUN_LFSR: begin
       enable_LFSRs <= 1;
-      if (iteration_number_1D258 > (estimated_iteration - iteration_approx - 1)) begin
+      if (~enable) begin
+        state <= WAIT_FOR_RESET;
+      end else if (iteration_number_1D258 > (estimated_iteration - iteration_approx - 1)) begin
         state <= IDENTIFY_POLYNOMIAL;
       end
     end
 
     IDENTIFY_POLYNOMIAL: begin
-      if (value_1D258 == decoded_data1) begin
+      if (~enable) begin
+        enable_LFSRs <= 0;
+        state <= WAIT_FOR_RESET;
+      end else if (value_1D258 == decoded_data1) begin
         polynomial <= 17'h1d258;
         iteration_number <= iteration_number_1D258;
         enable_LFSRs <= 0;

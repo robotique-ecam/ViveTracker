@@ -2,16 +2,18 @@
 // diamond 3.8-3.9 is untested
 // diamond 3.10 or higher is likely to abort with error about unable to use feedback signal
 // cause of this could be from wrong CPHASE/FPHASE parameters
-module pll_module_96_12
+module pll_module_96_12_72
 (
     input clk_100MHz, // 100 MHz, 0 deg
     output clk_96MHz, // 96 MHz, 0 deg
     output clk_12MHz, // 12 MHz, 0 deg
+    output clk_72MHz, // 72 MHz, 0 deg
     output locked
 );
 (* FREQUENCY_PIN_CLKI="100" *)
 (* FREQUENCY_PIN_CLKOP="96" *)
 (* FREQUENCY_PIN_CLKOS="12" *)
+(* FREQUENCY_PIN_CLKOS2="72" *)
 (* ICP_CURRENT="12" *) (* LPF_RESISTOR="8" *) (* MFG_ENABLE_FILTEROPAMP="1" *) (* MFG_GMCREF_SEL="2" *)
 EHXPLLL #(
         .PLLRST_ENA("DISABLED"),
@@ -31,6 +33,10 @@ EHXPLLL #(
         .CLKOS_DIV(48),
         .CLKOS_CPHASE(2),
         .CLKOS_FPHASE(0),
+        .CLKOS2_ENABLE("ENABLED"),
+        .CLKOS2_DIV(8),
+        .CLKOS2_CPHASE(2),
+        .CLKOS2_FPHASE(0),
         .FEEDBK_PATH("CLKOP"),
         .CLKFB_DIV(24)
     ) pll_i (
@@ -39,6 +45,7 @@ EHXPLLL #(
         .CLKI(clk_100MHz),
         .CLKOP(clk_96MHz),
         .CLKOS(clk_12MHz),
+        .CLKOS2(clk_72MHz),
         .CLKFB(clk_96MHz),
         .CLKINTFB(),
         .PHASESEL0(1'b0),

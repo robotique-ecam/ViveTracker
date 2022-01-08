@@ -68,8 +68,10 @@ always @ (posedge clk_96MHz) begin
     end
 
     STORE: begin
-      ram[avl_blocks_nb] <= block_to_store;
-      avl_blocks_nb <= avl_blocks_nb + 1;
+      if (avl_blocks_nb < 196) begin
+        ram[avl_blocks_nb] <= block_to_store;
+        avl_blocks_nb <= avl_blocks_nb + 1;
+      end
       state_1 <= WAIT_FOR_DUMP;
     end
 

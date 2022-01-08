@@ -7,6 +7,7 @@
 
 module triad_manager_sim (
   input wire clk_96MHz,
+  input wire clk_72MHz,
 
   input wire envelop_wire_0,
   input wire envelop_wire_1,
@@ -130,7 +131,7 @@ wire [16:0] polynomial;
 wire pulse_identifier_ready;
 
 pulse_identifier #(.waiting_ticks_after_second_pulses(100)) PULSE_IDENTIFIER0 (
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .block_wanted_0 (block_wanted_0),
   .block_wanted_1 (block_wanted_1),
   .block_wanted_2 (block_wanted_2),
@@ -157,7 +158,7 @@ reg triad_data_avl = 0;
 wire reset_pulse_identifier;
 
 data_parser PARSER0(
-  .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .triad_data (triad_data),
   .triad_data_avl (triad_data_avl),
   .reset_parser (reset_parser),
