@@ -1,17 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sun Dec 26 00:39:53 2021
+[*] Sat Jan  8 18:36:51 2022
 [*]
-[dumpfile] "/home/phileas/ViveTracker/FPGA/receivers_top_level_sim/receivers_top_level_sim_tb.vcd"
-[dumpfile_mtime] "Sun Dec 26 00:37:02 2021"
-[dumpfile_size] 128058881
+[dumpfile] "(null)"
 [savefile] "/home/phileas/ViveTracker/FPGA/receivers_top_level_sim/receivers_top_level_sim_tb.gtkw"
-[timestart] 557527
-[size] 1335 1043
+[timestart] 0
+[size] 1920 1043
 [pos] -1 -1
-*-6.422216 557663 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-24.422216 999 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] receivers_top_level_sim_tb.
-[treeopen] receivers_top_level_sim_tb.dut.
 [treeopen] receivers_top_level_sim_tb.dut.TRIAD0.
 [treeopen] receivers_top_level_sim_tb.dut.TRIAD0.PULSE_IDENTIFIER0.POLY_MANAGER.
 [treeopen] receivers_top_level_sim_tb.dut.TRIAD0.PULSE_IDENTIFIER0.POLY_MANAGER.POLY_FINDERS0.
@@ -25,6 +22,10 @@
 [sst_vpaned_height] 308
 @28
 receivers_top_level_sim_tb.dut.clk_96MHz
+@29
+receivers_top_level_sim_tb.dut.clk_72MHz
+@28
+receivers_top_level_sim_tb.dut.clk_12MHz
 @200
 -
 -BMC_decoder_0
@@ -180,9 +181,8 @@ receivers_top_level_sim_tb.dut.TRIAD0.PULSE_IDENTIFIER0.POLY_MANAGER.polynomial_
 receivers_top_level_sim_tb.dut.TRIAD0.PULSE_IDENTIFIER0.POLY_MANAGER.polynomial[16:0]
 @1001200
 -group_end
-@201
--
 @200
+-
 -POLY_FINDER_0
 @24
 receivers_top_level_sim_tb.dut.TRIAD0.PULSE_IDENTIFIER0.POLY_MANAGER.POLY_FINDERS0.estimated_iteration[16:0]

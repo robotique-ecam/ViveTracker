@@ -17,11 +17,13 @@ module receivers_top_level_sim (
 wire state_led;
 wire clk_96MHz;
 wire clk_12MHz;
+wire clk_72MHz;
 
 pll_module_sim PLLs (
   .clk_25MHz (clk_25MHz),
   .clk_96MHz (clk_96MHz),
-  .clk_12MHz (clk_12MHz)
+  .clk_12MHz (clk_12MHz),
+  .clk_72MHz (clk_72MHz)
   );
 
 reg [23:0] sys_ts = 0;
@@ -39,6 +41,7 @@ wire [101:0] sensor_iterations_0;
 
 triad_manager_sim TRIAD0 (
   .clk_96MHz (clk_96MHz),
+  .clk_72MHz (clk_72MHz),
   .envelop_wire_0 (envelop_wire_0),
   .envelop_wire_1 (envelop_wire_1),
   .envelop_wire_2 (envelop_wire_2),
