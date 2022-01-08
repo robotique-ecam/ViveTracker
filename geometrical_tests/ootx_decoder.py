@@ -3,7 +3,7 @@ import sys
 sys.path.append("../")
 
 
-from ootx_data import ootx_data #this is the array from data_tests/ootx_shaped
+from ootx_data import ootx_data  # this is the array from data_tests/ootx_shaped
 from bmc_decoder.bmc_decoder import SingleWord
 from polynomials.polynomial_finder import PolynomialIdentifier
 from timestamp_computing import TimestampComputing
