@@ -5,3 +5,4 @@
 .vscode/ipch
 __pycache__/
 *.pyc
+*geometrical_tests/ootx_data*
