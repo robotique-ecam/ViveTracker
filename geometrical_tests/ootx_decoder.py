@@ -3,7 +3,7 @@ import sys
 sys.path.append("../")
 
 
-from ootx_data import ootx_data
+from ootx_data import ootx_data #this is the array from data_tests/ootx_shaped
 from bmc_decoder.bmc_decoder import SingleWord
 from polynomials.polynomial_finder import PolynomialIdentifier
 from timestamp_computing import TimestampComputing
@@ -22,9 +22,6 @@ for words in ootx_data:
     identifier = PolynomialIdentifier(first_word, second_word, first_two_polys=True)
     resulting_polys = identifier.search_polynomial()
 
-    # for i in resulting_polys:
-    #    print(i)
-
     if hasattr(resulting_polys[0], "polynomial"):
         poly = resulting_polys[0].polynomial
 
@@ -35,7 +32,6 @@ for words in ootx_data:
     else:
         print(hex(words[0][1]))
         print(diff_ts)
-        # exit()
         ootx += " "
 
 print(ootx)
