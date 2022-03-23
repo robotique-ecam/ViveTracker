@@ -6,13 +6,14 @@
 
 module receivers_top_level (
   input wire clk_25MHz,
-  inout wire envelop_wire_0,
-  inout wire envelop_wire_1,
-  inout wire envelop_wire_2,
-  inout wire data_wire_0,
-  inout wire data_wire_1,
-  inout wire data_wire_2,
-  output wire tx
+  inout wire envelop_wire_00,
+  inout wire envelop_wire_01,
+  inout wire envelop_wire_02,
+  inout wire data_wire_00,
+  inout wire data_wire_01,
+  inout wire data_wire_02,
+  output wire tx,
+  output wire state_led
   );
 
 wire clk_96MHz;
@@ -42,12 +43,12 @@ wire [101:0] sensor_iterations_0;
 triad_manager TRIAD0 (
   .clk_96MHz (clk_96MHz),
   .clk_72MHz (clk_72MHz),
-  .envelop_wire_0 (envelop_wire_0),
-  .envelop_wire_1 (envelop_wire_1),
-  .envelop_wire_2 (envelop_wire_2),
-  .data_wire_0 (data_wire_0),
-  .data_wire_1 (data_wire_1),
-  .data_wire_2 (data_wire_2),
+  .envelop_wire_0 (envelop_wire_00),
+  .envelop_wire_1 (envelop_wire_01),
+  .envelop_wire_2 (envelop_wire_02),
+  .data_wire_0 (data_wire_00),
+  .data_wire_1 (data_wire_01),
+  .data_wire_2 (data_wire_02),
   .sys_ts (sys_ts),
   .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),

@@ -24,70 +24,6 @@ module triad_manager (
   output wire [101:0] sensor_iterations
   );
 
-wire d_0_oe;
-wire d_0_out;
-wire d_0_in_0;
-wire d_0_in_1;
-
-wire d_1_oe;
-wire d_1_out;
-wire d_1_in_0;
-wire d_1_in_1;
-
-wire d_2_oe;
-wire d_2_out;
-wire d_2_in_0;
-wire d_2_in_1;
-
-wire e_0_oe;
-wire e_0_out;
-wire e_0_in;
-
-wire e_1_oe;
-wire e_1_out;
-wire e_1_in;
-
-wire e_2_oe;
-wire e_2_out;
-wire e_2_in;
-
-inout_face_manager INOUT0 (
-  .clk_96MHz (clk_96MHz),
-
-  .data_wire_0 (data_wire_0),
-  .d_0_oe (d_0_oe),
-  .d_0_out (d_0_out),
-  .d_0_in_0 (d_0_in_0),
-  .d_0_in_1 (d_0_in_1),
-
-  .data_wire_1 (data_wire_1),
-  .d_1_oe (d_1_oe),
-  .d_1_out (d_1_out),
-  .d_1_in_0 (d_1_in_0),
-  .d_1_in_1 (d_1_in_1),
-
-  .data_wire_2 (data_wire_2),
-  .d_2_oe (d_2_oe),
-  .d_2_out (d_2_out),
-  .d_2_in_0 (d_2_in_0),
-  .d_2_in_1 (d_2_in_1),
-
-  .envelop_wire_0 (envelop_wire_0),
-  .e_0_oe (e_0_oe),
-  .e_0_out (e_0_out),
-  .e_0_in (e_0_in),
-
-  .envelop_wire_1 (envelop_wire_1),
-  .e_1_oe (e_1_oe),
-  .e_1_out (e_1_out),
-  .e_1_in (e_1_in),
-
-  .envelop_wire_2 (envelop_wire_2),
-  .e_2_oe (e_2_oe),
-  .e_2_out (e_2_out),
-  .e_2_in (e_2_in)
-  );
-
 wire [7:0] block_wanted_number_0;
 wire [40:0] block_wanted_0;
 wire data_ready_0;
@@ -95,19 +31,15 @@ wire [7:0] avl_blocks_nb_0;
 
 single_receiver_manager RECV0 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_0_in),
-  .d_in_0 (d_0_in_0),
-  .d_in_1 (d_0_in_1),
+  .data_wire (data_wire_0),
+  .envelop_wire (envelop_wire_0),
   .sys_ts (sys_ts),
   .block_wanted_number (block_wanted_number_0),
-  .envelop_output_enable (e_0_oe),
-  .envelop_output (e_0_out),
-  .data_output_enable (d_0_oe),
-  .data_output (d_0_out),
   .block_wanted (block_wanted_0),
   .data_ready (data_ready_0),
   .avl_blocks_nb (avl_blocks_nb_0)
   );
+
 
 wire [7:0] block_wanted_number_1;
 wire [40:0] block_wanted_1;
@@ -116,15 +48,10 @@ wire [7:0] avl_blocks_nb_1;
 
 single_receiver_manager RECV1 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_1_in),
-  .d_in_0 (d_1_in_0),
-  .d_in_1 (d_1_in_1),
+  .data_wire (data_wire_1),
+  .envelop_wire (envelop_wire_1),
   .sys_ts (sys_ts),
   .block_wanted_number (block_wanted_number_1),
-  .envelop_output_enable (e_1_oe),
-  .envelop_output (e_1_out),
-  .data_output_enable (d_1_oe),
-  .data_output (d_1_out),
   .block_wanted (block_wanted_1),
   .data_ready (data_ready_1),
   .avl_blocks_nb (avl_blocks_nb_1)
@@ -137,15 +64,10 @@ wire [7:0] avl_blocks_nb_2;
 
 single_receiver_manager RECV2 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_2_in),
-  .d_in_0 (d_2_in_0),
-  .d_in_1 (d_2_in_1),
+  .data_wire (data_wire_2),
+  .envelop_wire (envelop_wire_2),
   .sys_ts (sys_ts),
   .block_wanted_number (block_wanted_number_2),
-  .envelop_output_enable (e_2_oe),
-  .envelop_output (e_2_out),
-  .data_output_enable (d_2_oe),
-  .data_output (d_2_out),
   .block_wanted (block_wanted_2),
   .data_ready (data_ready_2),
   .avl_blocks_nb (avl_blocks_nb_2)

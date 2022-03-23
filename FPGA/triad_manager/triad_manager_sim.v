@@ -1,6 +1,5 @@
 `default_nettype none
 
-`include "../inout_face_manager/inout_face_manager_sim.v"
 `include "../single_receiver_manager/single_receiver_manager_sim.v"
 `include "../pulse_identifier/pulse_identifier.v"
 `include "../data_parser/data_parser.v"
@@ -21,53 +20,7 @@ module triad_manager_sim (
   input wire reset_parser,
 
   output wire data_avl,
-  output wire [101:0] sensor_iterations,
-
-  output wire state_led
-  );
-wire state_led1;
-wire state_led2;
-wire state_led3;
-wire state_led4;
-
-wire d_0_in_0;
-wire d_0_in_1;
-
-wire d_1_in_0;
-wire d_1_in_1;
-
-wire d_2_in_0;
-wire d_2_in_1;
-
-wire e_0_in;
-
-wire e_1_in;
-
-wire e_2_in;
-
-inout_face_manager_sim INOUT0 (
-  .clk_96MHz (clk_96MHz),
-
-  .data_wire_0 (data_wire_0),
-  .d_0_in_0 (d_0_in_0),
-  .d_0_in_1 (d_0_in_1),
-
-  .data_wire_1 (data_wire_1),
-  .d_1_in_0 (d_1_in_0),
-  .d_1_in_1 (d_1_in_1),
-
-  .data_wire_2 (data_wire_2),
-  .d_2_in_0 (d_2_in_0),
-  .d_2_in_1 (d_2_in_1),
-
-  .envelop_wire_0 (envelop_wire_0),
-  .e_0_in (e_0_in),
-
-  .envelop_wire_1 (envelop_wire_1),
-  .e_1_in (e_1_in),
-
-  .envelop_wire_2 (envelop_wire_2),
-  .e_2_in (e_2_in)
+  output wire [101:0] sensor_iterations
   );
 
 wire [7:0] block_wanted_number_0;
@@ -77,15 +30,13 @@ wire [7:0] avl_blocks_nb_0;
 
 single_receiver_manager_sim RECV0 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_0_in),
-  .d_in_0 (d_0_in_0),
-  .d_in_1 (d_0_in_1),
+  .data_wire (data_wire_0),
+  .envelop_wire (envelop_wire_0),
   .sys_ts (sys_ts),
   .block_wanted_number (block_wanted_number_0),
   .block_wanted (block_wanted_0),
   .data_ready (data_ready_0),
-  .avl_blocks_nb (avl_blocks_nb_0),
-  .state_led (state_led1)
+  .avl_blocks_nb (avl_blocks_nb_0)
   );
 
 wire [7:0] block_wanted_number_1;
@@ -95,15 +46,13 @@ wire [7:0] avl_blocks_nb_1;
 
 single_receiver_manager_sim RECV1 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_1_in),
-  .d_in_0 (d_1_in_0),
-  .d_in_1 (d_1_in_1),
+  .data_wire (data_wire_1),
+  .envelop_wire (envelop_wire_1),
   .sys_ts (sys_ts),
   .block_wanted_number (block_wanted_number_1),
   .block_wanted (block_wanted_1),
   .data_ready (data_ready_1),
-  .avl_blocks_nb (avl_blocks_nb_1),
-  .state_led (state_led2)
+  .avl_blocks_nb (avl_blocks_nb_1)
   );
 
 wire [7:0] block_wanted_number_2;
@@ -113,15 +62,13 @@ wire [7:0] avl_blocks_nb_2;
 
 single_receiver_manager_sim RECV2 (
   .clk_96MHz (clk_96MHz),
-  .e_in_0 (e_2_in),
-  .d_in_0 (d_2_in_0),
-  .d_in_1 (d_2_in_1),
+  .data_wire (data_wire_2),
+  .envelop_wire (envelop_wire_2),
   .sys_ts (sys_ts),
   .block_wanted_number (block_wanted_number_2),
   .block_wanted (block_wanted_2),
   .data_ready (data_ready_2),
-  .avl_blocks_nb (avl_blocks_nb_2),
-  .state_led (state_led3)
+  .avl_blocks_nb (avl_blocks_nb_2)
   );
 
 wire [16:0] pulse_id_0;

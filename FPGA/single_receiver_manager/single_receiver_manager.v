@@ -3,24 +3,45 @@
 `include "../bmc_decoder/bmc_decoder.v"
 `include "../ts4231_configurator/ts4231_configurator.v"
 `include "../ram_decoded/ram_decoded.v"
+`include "../single_inout_manager/single_inout_manager.v"
 
 module single_receiver_manager (
   input wire clk_96MHz,
-  input wire e_in_0,
-  input wire d_in_0,
-  input wire d_in_1,
+
+  inout wire data_wire,
+  inout wire envelop_wire,
+
   input wire [23:0] sys_ts,
   input wire [7:0] block_wanted_number,
-
-  output reg envelop_output_enable,
-  output reg envelop_output,
-
-  output reg data_output_enable,
-  output reg data_output,
 
   output wire [40:0] block_wanted,
   output wire data_ready,
   output wire [7:0] avl_blocks_nb,
+  );
+
+wire e_in_0;
+wire d_in_0;
+wire d_in_1;
+
+wire envelop_output_enable;
+wire envelop_output;
+
+wire data_output_enable;
+wire data_output;
+
+single_inout_manager INOUT_MANAGER (
+  .clk_96MHz (clk_96MHz),
+
+  .data_wire_0 (data_wire),
+  .d_0_oe (data_output_enable),
+  .d_0_out (data_output),
+  .d_0_in_0 (d_in_0),
+  .d_0_in_1 (d_in_1),
+
+  .envelop_wire_0 (envelop_wire),
+  .e_0_oe (envelop_output_enable),
+  .e_0_out (envelop_output),
+  .e_0_in (e_in_0)
   );
 
 wire configured;

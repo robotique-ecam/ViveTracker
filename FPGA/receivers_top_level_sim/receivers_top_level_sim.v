@@ -14,7 +14,7 @@ module receivers_top_level_sim (
   input wire data_wire_2,
   output wire tx
   );
-wire state_led;
+  
 wire clk_96MHz;
 wire clk_12MHz;
 wire clk_72MHz;
@@ -51,8 +51,7 @@ triad_manager_sim TRIAD0 (
   .sys_ts (sys_ts),
   .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),
-  .sensor_iterations (sensor_iterations_0),
-  .state_led (state_led)
+  .sensor_iterations (sensor_iterations_0)
   );
 
 
