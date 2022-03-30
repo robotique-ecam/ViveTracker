@@ -2,16 +2,26 @@
 
 `include "../pll_module/pll_module.v"
 `include "../serial_transmitter/serial_transmitter.v"
-`include "../triad_manager/triad_manager.v"
+`include "../octo_manager/octo_manager.v"
 
 module receivers_top_level (
   input wire clk_25MHz,
-  inout wire envelop_wire_00,
-  inout wire envelop_wire_01,
-  inout wire envelop_wire_02,
-  inout wire data_wire_00,
-  inout wire data_wire_01,
-  inout wire data_wire_02,
+  inout wire envelop_wire_0,
+  inout wire envelop_wire_1,
+  inout wire envelop_wire_2,
+  inout wire envelop_wire_3,
+  inout wire envelop_wire_4,
+  inout wire envelop_wire_5,
+  inout wire envelop_wire_6,
+  inout wire envelop_wire_7,
+  inout wire data_wire_0,
+  inout wire data_wire_1,
+  inout wire data_wire_2,
+  inout wire data_wire_3,
+  inout wire data_wire_4,
+  inout wire data_wire_5,
+  inout wire data_wire_6,
+  inout wire data_wire_7,
   output wire tx,
   output wire state_led
   );
@@ -38,17 +48,27 @@ end
 
 wire reset_parser_0;
 wire data_avl_0;
-wire [101:0] sensor_iterations_0;
+wire [271:0] sensor_iterations_0;
 
-triad_manager TRIAD0 (
+octo_manager OCTO0 (
   .clk_96MHz (clk_96MHz),
   .clk_72MHz (clk_72MHz),
-  .envelop_wire_0 (envelop_wire_00),
-  .envelop_wire_1 (envelop_wire_01),
-  .envelop_wire_2 (envelop_wire_02),
-  .data_wire_0 (data_wire_00),
-  .data_wire_1 (data_wire_01),
-  .data_wire_2 (data_wire_02),
+  .envelop_wire_0 (envelop_wire_0),
+  .envelop_wire_1 (envelop_wire_1),
+  .envelop_wire_2 (envelop_wire_2),
+  .envelop_wire_3 (envelop_wire_3),
+  .envelop_wire_4 (envelop_wire_4),
+  .envelop_wire_5 (envelop_wire_5),
+  .envelop_wire_6 (envelop_wire_6),
+  .envelop_wire_7 (envelop_wire_7),
+  .data_wire_0 (data_wire_0),
+  .data_wire_1 (data_wire_1),
+  .data_wire_2 (data_wire_2),
+  .data_wire_3 (data_wire_3),
+  .data_wire_4 (data_wire_4),
+  .data_wire_5 (data_wire_5),
+  .data_wire_6 (data_wire_6),
+  .data_wire_7 (data_wire_7),
   .sys_ts (sys_ts),
   .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),
