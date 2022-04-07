@@ -30,7 +30,8 @@ module octo_manager (
   input wire reset_parser,
 
   output wire data_avl,
-  output wire [271:0] sensor_iterations
+  output wire [271:0] sensor_iterations,
+  output wire state_led
   );
 
 wire [7:0] block_wanted_number_0;
@@ -218,7 +219,8 @@ pulse_identifier PULSE_IDENTIFIER0 (
   .iteration_5 (iteration_5),
   .iteration_6 (iteration_6),
   .iteration_7 (iteration_7),
-  .sys_ts (sys_ts)
+  .sys_ts (sys_ts),
+  .state_led (state_led)
   );
 
 data_parser PARSER0(

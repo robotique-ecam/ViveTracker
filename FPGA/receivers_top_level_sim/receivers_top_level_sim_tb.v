@@ -34,12 +34,12 @@ wire tx;
 
 receivers_top_level_sim dut (
   .clk_25MHz (clk),
-  .envelop_wire_4 (envelop_wire_0),
+  .envelop_wire_2 (envelop_wire_0),
   .envelop_wire_3 (envelop_wire_1),
-  .envelop_wire_7 (envelop_wire_2),
-  .data_wire_4 (data_wire_0),
+  .envelop_wire_1 (envelop_wire_2),
+  .data_wire_2 (data_wire_0),
   .data_wire_3 (data_wire_1),
-  .data_wire_7 (data_wire_2),
+  .data_wire_1 (data_wire_2),
   .tx (tx)
   );
 

@@ -49,7 +49,8 @@ module pulse_identifier (
   output wire [16:0] iteration_6,
   output wire [16:0] iteration_7,
 
-  input wire [23:0] sys_ts
+  input wire [23:0] sys_ts,
+  output wire state_led
   );
 
 parameter timeout_ticks = 72000; //~1ms in a 72MHz clock frequency
@@ -100,7 +101,6 @@ always @ (posedge clk_72MHz) begin
   block_wanted_second <= block_wanted[second_sensor];
 end
 
-
 reg [7:0] ram_data_ready;
 reg ram_data_ready_first, ram_data_ready_second;
 
@@ -145,7 +145,6 @@ always @ (posedge clk_72MHz) begin
   block_wanted_number_7 <= block_wanted_nb[7];
 end
 
-
 reg enable_polynomial_manager;
 wire [16:0] iteration_between_first_second;
 wire polynomial_manager_ready;
@@ -186,45 +185,45 @@ offset_finder OFFSET_FINDER0(
   );
 
 reg [7:0] avl_block, avl_block_recovered;
-reg [4:0] last_changed;
+reg [2:0] last_changed;
 reg reset_needed;
 
 always @ (posedge clk_72MHz) begin
-  if (reset_needed) begin
+  if (reset_done) begin
     avl_block <= 0;
-    last_changed <= 8;
-  end else if (avl_blocks_nb[0] != 0 && avl_block[0]==0) begin
+    last_changed <= 0;
+  end else if ((|avl_blocks_nb[0]) && avl_block[0]==0) begin
     avl_block[0] <= 1;
     last_changed <= 0;
-  end else if (avl_blocks_nb[1] != 0 && avl_block[1]==0) begin
+  end else if ((|avl_blocks_nb[1]) && avl_block[1]==0) begin
     avl_block[1] <= 1;
     last_changed <= 1;
-  end else if (avl_blocks_nb[2] != 0 && avl_block[2]==0) begin
+  end else if ((|avl_blocks_nb[2]) && avl_block[2]==0) begin
     avl_block[2] <= 1;
     last_changed <= 2;
-  end else if (avl_blocks_nb[3] != 0 && avl_block[3]==0) begin
+  end else if ((|avl_blocks_nb[3]) && avl_block[3]==0) begin
     avl_block[3] <= 1;
     last_changed <= 3;
-  end else if (avl_blocks_nb[4] != 0 && avl_block[4]==0) begin
+  end/* else if ((|avl_blocks_nb[4]) && avl_block[4]==0) begin
     avl_block[4] <= 1;
     last_changed <= 4;
-  end else if (avl_blocks_nb[5] != 0 && avl_block[5]==0) begin
+  end else if ((|avl_blocks_nb[5]) && avl_block[5]==0) begin
     avl_block[5] <= 1;
     last_changed <= 5;
-  end else if (avl_blocks_nb[6] != 0 && avl_block[6]==0) begin
+  end else if ((|avl_blocks_nb[6]) && avl_block[6]==0) begin
     avl_block[6] <= 1;
     last_changed <= 6;
-  end else if (avl_blocks_nb[7] != 0 && avl_block[7]==0) begin
+  end else if ((|avl_blocks_nb[7]) && avl_block[7]==0) begin
     avl_block[7] <= 1;
     last_changed <= 7;
-  end
+  end*/
 end
 
 reg processing;
 reg [4:0] sensor_nb_recovered;
 
 always @ (posedge clk_72MHz) begin
-  if (processing ==  0 && reset_needed) begin
+  if (reset_done) begin
     avl_block_recovered <= 0;
     sensor_nb_recovered <= 0;
     first_sensor <= 0;
@@ -256,6 +255,12 @@ always @ (posedge clk_72MHz) begin
   end
 end
 
+reg [4:0] previous_sensor_nb_recovered;
+
+always @ (posedge clk_72MHz) begin
+  previous_sensor_nb_recovered <= sensor_nb_recovered;
+end
+
 reg all_ram_dump, previous_all_ram_dump;
 reg [7:0] all_ram_dump_reg;
 reg reset_done;
@@ -266,16 +271,16 @@ always @ (posedge clk_72MHz) begin
   all_ram_dump_reg[1] <= |avl_blocks_nb[1];
   all_ram_dump_reg[2] <= |avl_blocks_nb[2];
   all_ram_dump_reg[3] <= |avl_blocks_nb[3];
-  all_ram_dump_reg[4] <= |avl_blocks_nb[4];
-  all_ram_dump_reg[5] <= |avl_blocks_nb[5];
-  all_ram_dump_reg[6] <= |avl_blocks_nb[6];
-  all_ram_dump_reg[7] <= |avl_blocks_nb[7];
+  all_ram_dump_reg[4] <= 0;//|avl_blocks_nb[4];
+  all_ram_dump_reg[5] <= 0;//|avl_blocks_nb[5];
+  all_ram_dump_reg[6] <= 0;//|avl_blocks_nb[6];
+  all_ram_dump_reg[7] <= 0;//|avl_blocks_nb[7];
   all_ram_dump <= !(|all_ram_dump_reg);
   previous_all_ram_dump <= all_ram_dump;
-  if (previous_all_ram_dump == 0 && all_ram_dump == 1) begin
-    reset_needed <= 1;
-  end else if (reset_done) begin
+  if (reset_done) begin
     reset_needed <= 0;
+  end else if (previous_all_ram_dump == 0 && all_ram_dump == 1) begin
+    reset_needed <= 1;
   end
 end
 
@@ -284,6 +289,8 @@ initial begin
   reset_needed = 1;
   wait_for_module_activation = 0;
   state = ERROR_OR_RESET;
+  avl_block = 0;
+  avl_block_recovered = 0;
 end
 
 reg [16:0] iteration_buffer [7:0];
@@ -300,9 +307,11 @@ always @ (posedge clk_72MHz) begin
   case (state)
     WAITING_FOR_DATA: begin
       reset_done <= 0;
-      if (sensor_nb_recovered == 2) begin
+      if (sensor_nb_recovered == 2 && previous_sensor_nb_recovered == 1) begin
         state <= POLYNOMIAL_IDENTIFICATION;
         processing <= 1;
+      end else if (reset_needed) begin
+        state <= ERROR_OR_RESET;
       end
     end
 
@@ -363,18 +372,6 @@ always @ (posedge clk_72MHz) begin
       state <= DATA_READY;
     end
 
-    /*PARSE_DATA: begin
-      iteration_buffer[first_sensor] = offset_first_pulse;
-      iteration_buffer[second_sensor] = offset_second_pulse;
-      if (ts_third_data != 0) begin
-        iteration_buffer[third_sensor] = offset_third_pulse;
-      end
-      if (ts_fourth_data != 0) begin
-        iteration_buffer[fourth_sensor] = offset_fourth_pulse;
-      end
-      state <= DATA_READY;
-    end*/
-
     DATA_READY: begin
       processing <= 0;
       ready <= 1;
@@ -394,7 +391,6 @@ always @ (posedge clk_72MHz) begin
       reset_done <= 1;
       offset_finder_enable <= 0;
       enable_polynomial_manager <= 0;
-      state <= WAITING_FOR_DATA;
       iteration_buffer[0] <= 0;
       iteration_buffer[1] <= 0;
       iteration_buffer[2] <= 0;
@@ -404,10 +400,25 @@ always @ (posedge clk_72MHz) begin
       iteration_buffer[6] <= 0;
       iteration_buffer[7] <= 0;
       wait_for_module_activation <= 1;
+      if (reset_needed == 0) begin
+        state <= WAITING_FOR_DATA;
+      end
     end
 
     default: ;
   endcase
 end
+
+reg [20:0] cnt = 0;
+reg [3:0] previous_state;
+
+always @ (posedge clk_72MHz) begin
+  previous_state <= state;
+  if (previous_state != state && state == FIRST_OFFSET_IDENTIFICATION) begin
+    cnt <= cnt + 1;
+  end
+end
+
+assign state_led = cnt[4];
 
 endmodule // pulse_identifier

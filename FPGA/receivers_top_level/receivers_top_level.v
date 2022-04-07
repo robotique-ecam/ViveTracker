@@ -72,7 +72,8 @@ octo_manager OCTO0 (
   .sys_ts (sys_ts),
   .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),
-  .sensor_iterations (sensor_iterations_0)
+  .sensor_iterations (sensor_iterations_0),
+  .state_led (state_led)
   );
 
 
