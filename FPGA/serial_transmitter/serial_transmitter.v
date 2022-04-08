@@ -51,9 +51,9 @@ reg [5:0] car_count = 0;
 
 always @ ( posedge clk_12MHz ) begin
   case (car_count)
-    8'd0: data <= 8'h00;
-    8'd1: data <= 8'h00;
-    8'd2: data <= 8'h00;
+    8'd0: data <= 8'hff;
+    8'd1: data <= 8'hff;
+    8'd2: data <= 8'hff;
 
     8'd3: data <= iteration0_sensor0[23:16];
     8'd4: data <= iteration0_sensor0[15:8];
