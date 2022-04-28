@@ -5,40 +5,62 @@ FREQUENCY   PORT "clk_25MHz"    25 MHZ;
 LOCATE      COMP "tx"       SITE "J17";
 IOBUF       PORT "tx"       IO_TYPE=LVCMOS33;
 
-LOCATE      COMP "state_led" SITE "U16";
-IOBUF       PORT "state_led" IO_TYPE=LVCMOS25;
 
-LOCATE      COMP "data_wire_0"  SITE "D20";
-IOBUF       PORT "data_wire_0" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_1"  SITE "A19";
-IOBUF       PORT "data_wire_1" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_2"  SITE "F2";
-IOBUF       PORT "data_wire_2" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_3"  SITE "H4";
-IOBUF       PORT "data_wire_3" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_4"  SITE "B1";
-IOBUF       PORT "data_wire_4" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_5"  SITE "D2";
-IOBUF       PORT "data_wire_5" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_6"  SITE "E2";
-IOBUF       PORT "data_wire_6" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "data_wire_7"  SITE "E3";
-IOBUF       PORT "data_wire_7" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-
-
-LOCATE      COMP "envelop_wire_0"  SITE "B19";
+LOCATE      COMP "envelop_wire_0"  SITE "D20";
 IOBUF       PORT "envelop_wire_0" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_1"  SITE "A18";
+LOCATE      COMP "data_wire_0"  SITE "B19";
+IOBUF       PORT "data_wire_0" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_0" SITE "E1";
+IOBUF       PORT "state_led_0" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_1"  SITE "F20";
 IOBUF       PORT "envelop_wire_1" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_2"  SITE "F1";
+LOCATE      COMP "data_wire_1"  SITE "B20";
+IOBUF       PORT "data_wire_1" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_1" SITE "E4";
+IOBUF       PORT "state_led_1" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_2"  SITE "A3";
 IOBUF       PORT "envelop_wire_2" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_3"  SITE "G3";
+LOCATE      COMP "data_wire_2"  SITE "B1";
+IOBUF       PORT "data_wire_2" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_2" SITE "F3";
+IOBUF       PORT "state_led_2" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_3"  SITE "E3";
 IOBUF       PORT "envelop_wire_3" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_4"  SITE "C1";
+LOCATE      COMP "data_wire_3"  SITE "C2";
+IOBUF       PORT "data_wire_3" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_3" SITE "H3";
+IOBUF       PORT "state_led_3" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_4"  SITE "A2";
 IOBUF       PORT "envelop_wire_4" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_5"  SITE "D1";
+LOCATE      COMP "data_wire_4"  SITE "K4";
+IOBUF       PORT "data_wire_4" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_4" SITE "F2";
+IOBUF       PORT "state_led_4" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_5"  SITE "K5";
 IOBUF       PORT "envelop_wire_5" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_6"  SITE "E1";
+LOCATE      COMP "data_wire_5"  SITE "B3";
+IOBUF       PORT "data_wire_5" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_5" SITE "F1";
+IOBUF       PORT "state_led_5" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_6"  SITE "F4";
 IOBUF       PORT "envelop_wire_6" PULLMODE=NONE  IO_TYPE=LVCMOS33;
-LOCATE      COMP "envelop_wire_7"  SITE "E4";
+LOCATE      COMP "data_wire_6"  SITE "E6";
+IOBUF       PORT "data_wire_6" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_6" SITE "G3";
+IOBUF       PORT "state_led_6" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "envelop_wire_7"  SITE "E5";
 IOBUF       PORT "envelop_wire_7" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "data_wire_7"  SITE "F5";
+IOBUF       PORT "data_wire_7" PULLMODE=NONE  IO_TYPE=LVCMOS33;
+LOCATE      COMP "state_led_7" SITE "H4";
+IOBUF       PORT "state_led_7" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "global_configuration_state_led" SITE "H5";
+IOBUF       PORT "global_configuration_state_led" IO_TYPE=LVCMOS33;
