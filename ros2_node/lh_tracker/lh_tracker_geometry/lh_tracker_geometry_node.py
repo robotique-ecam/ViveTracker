@@ -15,6 +15,11 @@ from visualization_msgs.msg import Marker, MarkerArray
 from std_msgs.msg import ColorRGBA
 from lh_tracker_geometry.lh_geometry import LH2Geometry
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
+
+from scipy.optimize import least_squares
+from datetime import datetime
+
+
 class LH_tracker_geometry(Node):
     def __init__(self):
         """Init LH_tracker_geometry node"""
@@ -73,6 +78,208 @@ class LH_tracker_geometry(Node):
 
         self.get_logger().info("lh_tracker_geometry node is ready")
         self.tracker_pose = Point()
+        # self.loop()#[ 58.00686257, 148.00825208, 119.26042336,  29.46566866 ]
+        # self.find_intrinsic_lh_parameters()
+
+    def find_intrinsic_lh_parameters(self):
+        initial_intrinsic_parameters = np.array(
+            [58.47057548, 148.05853525, 119.11307057, 29.59075308]
+        )
+        optimizer = least_squares(
+            fun=self.loop,
+            x0=initial_intrinsic_parameters,
+            max_nfev=10000000,
+            ftol=1e-9,
+            xtol=1e-9,
+            gtol=1e-9,
+            diff_step=0.00001,
+        )
+        self.get_logger().info(f"intrinsic_parameters_optimized: {optimizer.x}")
+
+    def loop(self, initial_intrinsic_parameters=None):
+
+        if initial_intrinsic_parameters != None:
+            self.geometry.update_intrinsic_parameters(
+                tilt1=initial_intrinsic_parameters[0],
+                tilt2=initial_intrinsic_parameters[1],
+                phase=initial_intrinsic_parameters[2],
+                start_angle=initial_intrinsic_parameters[3],
+            )
+
+        # self.get_logger().info(f"initial_intrinsic_parameters error: {initial_intrinsic_parameters}")
+        self.saved_iteration_list = LHtracker()
+        self.global_index = 0
+        self.calibration_done = False
+
+        error = lambda x_ref, y_ref, x, y: np.sqrt((x_ref - x) ** 2 + (y_ref - y) ** 2)
+        errors = []
+        self.calibration_process_top()
+
+        now = datetime.now()
+        self.get_position_from_iteration(csts.calibration_iterations)
+        later = datetime.now()
+        self.get_logger().info(
+            f"seconds of processing x:{(later - now).total_seconds()}"
+        )
+        self.get_logger().info(
+            f"tracker_pose error x150_y10: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(1.5, 0.1, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x120_y_10)
+        self.get_logger().info(
+            f"tracker_pose error x120_y_10: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(1.2, 0.1, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x85_y10)
+        self.get_logger().info(
+            f"tracker_pose error x85_y10: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.85, 0.1, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x40_y10)
+        self.get_logger().info(
+            f"tracker_pose error x40_y10: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.4, 0.1, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x120_y75)
+        self.get_logger().info(
+            f"tracker_pose error x120_y75: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(1.2, 0.75, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x80_y75)
+        self.get_logger().info(
+            f"tracker_pose error x80_y75: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.8, 0.75, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x120_y150)
+        self.get_logger().info(
+            f"tracker_pose error x120_y150: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(1.2, 1.5, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x80_y150)
+        self.get_logger().info(
+            f"tracker_pose error x80_y150: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.8, 1.5, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x0_y10)
+        self.get_logger().info(
+            f"tracker_pose error x0_y10: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.0, 0.1, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x45_y75)
+        self.get_logger().info(
+            f"tracker_pose error x45_y75: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.45, 0.75, self.tracker_pose.x, self.tracker_pose.y))
+
+        self.get_position_from_iteration(csts.x45_y150)
+        self.get_logger().info(
+            f"tracker_pose error x45_y150: x:{self.tracker_pose.x}, y:{self.tracker_pose.y}"
+        )
+        errors.append(error(0.45, 1.5, self.tracker_pose.x, self.tracker_pose.y))
+
+        # self.get_logger().info(f"tracker_pose x: {self.tracker_pose.x}, y:{self.tracker_pose.y}, theta:{np.rad2deg(self.tracker_pose.z)}")
+        avg_error = 0.0
+        errors_to_show = []
+        for i in range(len(errors)):
+            avg_error += errors[i]
+            errors_to_show.append(round(errors[i], 3))
+        self.get_logger().info(f"tracker_pose error: {round(avg_error/len(errors), 4)}")
+        self.get_logger().info(
+            f"errors y 0.10: {errors_to_show[0]}  {errors_to_show[1]}  {errors_to_show[2]}  {errors_to_show[3]}  {errors_to_show[8]}"
+        )
+        self.get_logger().info(
+            f"errors y 0.75: 0.000  {errors_to_show[4]}  {errors_to_show[5]}  {errors_to_show[9]}"
+        )
+        self.get_logger().info(
+            f"errors y 1.50: 0.000  {errors_to_show[6]}  {errors_to_show[7]}  {errors_to_show[10]}"
+        )
+        return errors
+
+    def calibration_process_top(self):
+        i = 0
+        while self.calibration_done != True:
+            # rd = random.randint(0, len(csts.calibration_iterations) - 1)
+            self.iterations.first_sensor_first_iteration = csts.calibration_iterations[
+                i
+            ][0]
+            self.iterations.first_sensor_second_iteration = csts.calibration_iterations[
+                i
+            ][1]
+            self.iterations.second_sensor_first_iteration = csts.calibration_iterations[
+                i
+            ][2]
+            self.iterations.second_sensor_second_iteration = (
+                csts.calibration_iterations[i][3]
+            )
+            self.iterations.third_sensor_first_iteration = csts.calibration_iterations[
+                i
+            ][4]
+            self.iterations.third_sensor_second_iteration = csts.calibration_iterations[
+                i
+            ][5]
+            self.iterations.fourth_sensor_first_iteration = csts.calibration_iterations[
+                i
+            ][6]
+            self.iterations.fourth_sensor_second_iteration = (
+                csts.calibration_iterations[i][7]
+            )
+            i += 1
+            self.lh_sub_callback(self.iterations)
+
+    def get_position_from_iteration(self, iteration_list):
+        self.iterations.first_sensor_first_iteration = 0
+        self.iterations.first_sensor_second_iteration = 0
+        self.iterations.second_sensor_first_iteration = 0
+        self.iterations.second_sensor_second_iteration = 0
+        self.iterations.third_sensor_first_iteration = 0
+        self.iterations.third_sensor_second_iteration = 0
+        self.iterations.fourth_sensor_first_iteration = 0
+        self.iterations.fourth_sensor_second_iteration = 0
+        for i in range(self.avg_nb):
+            self.iterations.first_sensor_first_iteration += iteration_list[i][0]
+            self.iterations.first_sensor_second_iteration += iteration_list[i][1]
+            self.iterations.second_sensor_first_iteration += iteration_list[i][2]
+            self.iterations.second_sensor_second_iteration += iteration_list[i][3]
+            self.iterations.third_sensor_first_iteration += iteration_list[i][4]
+            self.iterations.third_sensor_second_iteration += iteration_list[i][5]
+            self.iterations.fourth_sensor_first_iteration += iteration_list[i][6]
+            self.iterations.fourth_sensor_second_iteration += iteration_list[i][7]
+        self.iterations.first_sensor_first_iteration = int(
+            self.iterations.first_sensor_first_iteration / self.avg_nb
+        )
+        self.iterations.first_sensor_second_iteration = int(
+            self.iterations.first_sensor_second_iteration / self.avg_nb
+        )
+        self.iterations.second_sensor_first_iteration = int(
+            self.iterations.second_sensor_first_iteration / self.avg_nb
+        )
+        self.iterations.second_sensor_second_iteration = int(
+            self.iterations.second_sensor_second_iteration / self.avg_nb
+        )
+        self.iterations.third_sensor_first_iteration = int(
+            self.iterations.third_sensor_first_iteration / self.avg_nb
+        )
+        self.iterations.third_sensor_second_iteration = int(
+            self.iterations.third_sensor_second_iteration / self.avg_nb
+        )
+        self.iterations.fourth_sensor_first_iteration = int(
+            self.iterations.fourth_sensor_first_iteration / self.avg_nb
+        )
+        self.iterations.fourth_sensor_second_iteration = int(
+            self.iterations.fourth_sensor_second_iteration / self.avg_nb
+        )
+        self.lh_sub_callback(self.iterations)
+        return self.tracker_pose
+
     def init_line_list(self):
         self.line_list = Marker()
         self.line_list.header.frame_id = "map"
