@@ -49,8 +49,7 @@ module pulse_identifier (
   output wire [16:0] iteration_6,
   output wire [16:0] iteration_7,
 
-  input wire [23:0] sys_ts,
-  output wire state_led
+  input wire [23:0] sys_ts
   );
 
 parameter timeout_ticks = 72000; //~1ms in a 72MHz clock frequency
@@ -408,17 +407,5 @@ always @ (posedge clk_72MHz) begin
     default: ;
   endcase
 end
-
-reg [20:0] cnt = 0;
-reg [3:0] previous_state;
-
-always @ (posedge clk_72MHz) begin
-  previous_state <= state;
-  if (previous_state != state && state == FIRST_OFFSET_IDENTIFICATION) begin
-    cnt <= cnt + 1;
-  end
-end
-
-assign state_led = cnt[4];
 
 endmodule // pulse_identifier

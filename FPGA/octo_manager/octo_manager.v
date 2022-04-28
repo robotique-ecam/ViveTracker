@@ -31,7 +31,14 @@ module octo_manager (
 
   output wire data_avl,
   output wire [271:0] sensor_iterations,
-  output wire state_led
+  output wire state_led_0,
+  output wire state_led_1,
+  output wire state_led_2,
+  output wire state_led_3,
+  output wire state_led_4,
+  output wire state_led_5,
+  output wire state_led_6,
+  output wire state_led_7
   );
 
 wire [7:0] block_wanted_number_0;
@@ -47,7 +54,8 @@ single_receiver_manager RECV0 (
   .block_wanted_number (block_wanted_number_0),
   .block_wanted (block_wanted_0),
   .data_ready (data_ready_0),
-  .avl_blocks_nb (avl_blocks_nb_0)
+  .avl_blocks_nb (avl_blocks_nb_0),
+  .state_led (state_led_0)
   );
 
 wire [7:0] block_wanted_number_1;
@@ -63,7 +71,8 @@ single_receiver_manager RECV1 (
   .block_wanted_number (block_wanted_number_1),
   .block_wanted (block_wanted_1),
   .data_ready (data_ready_1),
-  .avl_blocks_nb (avl_blocks_nb_1)
+  .avl_blocks_nb (avl_blocks_nb_1),
+  .state_led (state_led_1)
   );
 
 wire [7:0] block_wanted_number_2;
@@ -79,7 +88,8 @@ single_receiver_manager RECV2 (
   .block_wanted_number (block_wanted_number_2),
   .block_wanted (block_wanted_2),
   .data_ready (data_ready_2),
-  .avl_blocks_nb (avl_blocks_nb_2)
+  .avl_blocks_nb (avl_blocks_nb_2),
+  .state_led (state_led_2)
   );
 
 wire [7:0] block_wanted_number_3;
@@ -95,7 +105,8 @@ single_receiver_manager RECV3 (
   .block_wanted_number (block_wanted_number_3),
   .block_wanted (block_wanted_3),
   .data_ready (data_ready_3),
-  .avl_blocks_nb (avl_blocks_nb_3)
+  .avl_blocks_nb (avl_blocks_nb_3),
+  .state_led (state_led_3)
   );
 
 wire [7:0] block_wanted_number_4;
@@ -111,7 +122,8 @@ single_receiver_manager RECV4 (
   .block_wanted_number (block_wanted_number_4),
   .block_wanted (block_wanted_4),
   .data_ready (data_ready_4),
-  .avl_blocks_nb (avl_blocks_nb_4)
+  .avl_blocks_nb (avl_blocks_nb_4),
+  .state_led (state_led_4)
   );
 
 wire [7:0] block_wanted_number_5;
@@ -127,7 +139,8 @@ single_receiver_manager RECV5 (
   .block_wanted_number (block_wanted_number_5),
   .block_wanted (block_wanted_5),
   .data_ready (data_ready_5),
-  .avl_blocks_nb (avl_blocks_nb_5)
+  .avl_blocks_nb (avl_blocks_nb_5),
+  .state_led (state_led_5)
   );
 
 wire [7:0] block_wanted_number_6;
@@ -143,7 +156,8 @@ single_receiver_manager RECV6 (
   .block_wanted_number (block_wanted_number_6),
   .block_wanted (block_wanted_6),
   .data_ready (data_ready_6),
-  .avl_blocks_nb (avl_blocks_nb_6)
+  .avl_blocks_nb (avl_blocks_nb_6),
+  .state_led (state_led_6)
   );
 
 wire [7:0] block_wanted_number_7;
@@ -159,7 +173,8 @@ single_receiver_manager RECV7 (
   .block_wanted_number (block_wanted_number_7),
   .block_wanted (block_wanted_7),
   .data_ready (data_ready_7),
-  .avl_blocks_nb (avl_blocks_nb_7)
+  .avl_blocks_nb (avl_blocks_nb_7),
+  .state_led (state_led_7)
   );
 
 wire [16:0] polynomial;
@@ -219,8 +234,7 @@ pulse_identifier PULSE_IDENTIFIER0 (
   .iteration_5 (iteration_5),
   .iteration_6 (iteration_6),
   .iteration_7 (iteration_7),
-  .sys_ts (sys_ts),
-  .state_led (state_led)
+  .sys_ts (sys_ts)
   );
 
 data_parser PARSER0(

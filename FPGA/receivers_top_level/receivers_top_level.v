@@ -23,7 +23,15 @@ module receivers_top_level (
   inout wire data_wire_6,
   inout wire data_wire_7,
   output wire tx,
-  output wire state_led
+  output wire state_led_0,
+  output wire state_led_1,
+  output wire state_led_2,
+  output wire state_led_3,
+  output wire state_led_4,
+  output wire state_led_5,
+  output wire state_led_6,
+  output wire state_led_7,
+  output wire global_configuration_state_led
   );
 
 wire clk_96MHz;
@@ -73,7 +81,14 @@ octo_manager OCTO0 (
   .reset_parser (reset_parser_0),
   .data_avl (data_avl_0),
   .sensor_iterations (sensor_iterations_0),
-  .state_led (state_led)
+  .state_led_0 (state_led_0),
+  .state_led_1 (state_led_1),
+  .state_led_2 (state_led_2),
+  .state_led_3 (state_led_3),
+  .state_led_4 (state_led_4),
+  .state_led_5 (state_led_5),
+  .state_led_6 (state_led_6),
+  .state_led_7 (state_led_7)
   );
 
 
@@ -84,5 +99,7 @@ serial_transmitter UART (
   .tx (tx),
   .reset_parser (reset_parser_0)
   );
+
+assign global_configuration_state_led = !(!state_led_0 && !state_led_1 && !state_led_2 && !state_led_3 && !state_led_4 && !state_led_5 && !state_led_6 && !state_led_7); 
 
 endmodule // receivers_top_level

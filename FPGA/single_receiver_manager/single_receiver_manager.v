@@ -17,6 +17,7 @@ module single_receiver_manager (
   output wire [40:0] block_wanted,
   output wire data_ready,
   output wire [7:0] avl_blocks_nb,
+  output wire state_led
   );
 
 wire e_in_0;
@@ -88,5 +89,7 @@ ram_decoded RAM(
   .reset_bmc_decoder (reset),
   .avl_blocks_nb (avl_blocks_nb)
   );
+
+assign state_led = !configured;
 
 endmodule // single_receiver_manager
