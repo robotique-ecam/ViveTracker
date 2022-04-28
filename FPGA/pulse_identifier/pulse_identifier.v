@@ -203,7 +203,7 @@ always @ (posedge clk_72MHz) begin
   end else if ((|avl_blocks_nb[3]) && avl_block[3]==0) begin
     avl_block[3] <= 1;
     last_changed <= 3;
-  end/* else if ((|avl_blocks_nb[4]) && avl_block[4]==0) begin
+  end else if ((|avl_blocks_nb[4]) && avl_block[4]==0) begin
     avl_block[4] <= 1;
     last_changed <= 4;
   end else if ((|avl_blocks_nb[5]) && avl_block[5]==0) begin
@@ -215,7 +215,7 @@ always @ (posedge clk_72MHz) begin
   end else if ((|avl_blocks_nb[7]) && avl_block[7]==0) begin
     avl_block[7] <= 1;
     last_changed <= 7;
-  end*/
+  end
 end
 
 reg processing;
@@ -270,10 +270,10 @@ always @ (posedge clk_72MHz) begin
   all_ram_dump_reg[1] <= |avl_blocks_nb[1];
   all_ram_dump_reg[2] <= |avl_blocks_nb[2];
   all_ram_dump_reg[3] <= |avl_blocks_nb[3];
-  all_ram_dump_reg[4] <= 0;//|avl_blocks_nb[4];
-  all_ram_dump_reg[5] <= 0;//|avl_blocks_nb[5];
-  all_ram_dump_reg[6] <= 0;//|avl_blocks_nb[6];
-  all_ram_dump_reg[7] <= 0;//|avl_blocks_nb[7];
+  all_ram_dump_reg[4] <= |avl_blocks_nb[4];
+  all_ram_dump_reg[5] <= |avl_blocks_nb[5];
+  all_ram_dump_reg[6] <= |avl_blocks_nb[6];
+  all_ram_dump_reg[7] <= |avl_blocks_nb[7];
   all_ram_dump <= !(|all_ram_dump_reg);
   previous_all_ram_dump <= all_ram_dump;
   if (reset_done) begin
