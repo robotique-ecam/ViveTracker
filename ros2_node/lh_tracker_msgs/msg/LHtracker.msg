@@ -1,0 +1,24 @@
+# Setting text line on LCD
+std_msgs/Header  header
+
+uint8 sensors_nb_recovered
+
+uint8 id_first_sensor
+
+uint32 first_sensor_first_iteration
+uint32 first_sensor_second_iteration
+
+uint8 id_second_sensor
+
+uint32 second_sensor_first_iteration
+uint32 second_sensor_second_iteration
+
+uint8 id_third_sensor
+
+uint32 third_sensor_first_iteration
+uint32 third_sensor_second_iteration
+
+uint8 id_fourth_sensor
+
+uint32 fourth_sensor_first_iteration
+uint32 fourth_sensor_second_iteration
