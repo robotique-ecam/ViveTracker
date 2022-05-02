@@ -13,7 +13,7 @@ class LFSR:
         self.state = self.start
 
     def enter_loop(self):
-        for i in range(2 ** 17):
+        for i in range(2**17):
             next(self)
         return self
 
@@ -40,7 +40,7 @@ class LFSR:
     def cpt_for(self, value):
         self.reset()
 
-        for cpt in range(2 ** 17):
+        for cpt in range(2**17):
             if self.state == value:
                 return cpt
             self.next()

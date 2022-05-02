@@ -110,10 +110,13 @@ class SynthetizedBeamsAnalyzed:
 class PolynomialIdentifier:
     """Polynomial Identifier class interpolates a potential polynomial between 2 SingleWord object"""
 
-    def __init__(self, first_word: SingleWord, second_word: SingleWord) -> None:
+    def __init__(
+        self, first_word: SingleWord, second_word: SingleWord, first_two_polys=False
+    ) -> None:
         self.w_1 = first_word
         self.w_2 = second_word
         self.iteration_estimation = self.__iteration_estimator()
+        self.first_two_polys = first_two_polys
 
     def __find_diff_timestamp(self) -> np.float64:
         """Private function returning the difference of timestamp between
@@ -136,7 +139,10 @@ class PolynomialIdentifier:
             if self.w_1.start_timestamp < self.w_2.start_timestamp
             else self.w_2.data
         )
-        return [LFSR(poly, initial_LFSR_value) for poly in polys]
+        if not self.first_two_polys:
+            return [LFSR(poly, initial_LFSR_value) for poly in polys]
+        else:
+            return [LFSR(poly, initial_LFSR_value) for poly in [polys[0], polys[1]]]
 
     def search_polynomial(self) -> list:
         """Tries to interpolate a list of theorical polynomials for this w_1 and w_2 SingleWord object

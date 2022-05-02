@@ -28,7 +28,7 @@ class SameValue:
 lfsr = LFSR(polynomial_to_analysis)
 pos = [1]
 
-for i in range(2 ** 17):
+for i in range(2**17):
     pos.append(lfsr.next())
 
 pourcent = 0
