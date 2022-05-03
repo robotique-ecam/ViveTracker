@@ -58,12 +58,12 @@ class LH2Geometry:
 
         negative_quadrants = a1 > a2
 
-        azimuth = np.arccos(np.sqrt((M.x ** 2) / (M.x ** 2 + M.y ** 2)))
+        azimuth = np.arccos(np.sqrt((M.x**2) / (M.x**2 + M.y**2)))
         azimuth = -azimuth if M.y < 0 else azimuth
         azimuth = -azimuth if negative_quadrants else azimuth
 
         elevation = np.arccos(
-            np.sqrt((M.x ** 2 + M.y ** 2) / (M.x ** 2 + M.y ** 2 + M.z ** 2))
+            np.sqrt((M.x**2 + M.y**2) / (M.x**2 + M.y**2 + M.z**2))
         )
         elevation = -elevation if negative_quadrants else elevation
 
