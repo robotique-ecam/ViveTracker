@@ -239,4 +239,4 @@ data_parser PARSER0(
   .reset_pulse_identifier (reset_pulse_identifier)
   );
 
-endmodule // triad_manager
+endmodule // octo_manager_sim

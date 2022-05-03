@@ -51,4 +51,4 @@ always @ (negedge clk_96MHz) begin
   buffer_0 <= d_0_in_0;
 end
 
-endmodule // single_inout_manager
+endmodule // single_inout_manager_sim
