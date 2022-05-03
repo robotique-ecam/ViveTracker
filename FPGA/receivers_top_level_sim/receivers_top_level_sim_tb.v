@@ -34,12 +34,12 @@ wire tx;
 
 receivers_top_level_sim dut (
   .clk_25MHz (clk),
-  .envelop_wire_0 (envelop_wire_0),
-  .envelop_wire_1 (envelop_wire_1),
-  .envelop_wire_2 (envelop_wire_2),
-  .data_wire_0 (data_wire_0),
-  .data_wire_1 (data_wire_1),
-  .data_wire_2 (data_wire_2),
+  .envelop_wire_2 (envelop_wire_0),
+  .envelop_wire_3 (envelop_wire_1),
+  .envelop_wire_1 (envelop_wire_2),
+  .data_wire_2 (data_wire_0),
+  .data_wire_3 (data_wire_1),
+  .data_wire_1 (data_wire_2),
   .tx (tx)
   );
 
@@ -245,7 +245,7 @@ initial begin
   zero_input(0, 0);
   zero_input(0, 0);
   wire_data_changing <= ~wire_data_changing;
-  #(FRAME * 30) $display("End of simulation");
+  #(FRAME * 40) $display("End of simulation");
   #20 $display("End of simulation");
   $finish;
 end
