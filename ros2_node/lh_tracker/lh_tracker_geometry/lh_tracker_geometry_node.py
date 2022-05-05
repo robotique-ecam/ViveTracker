@@ -64,7 +64,6 @@ class LH_tracker_geometry(Node):
 
         self.saved_iteration_list = LHtracker()
 
-        # self.create_timer(959 / 48000, self.loop)
         self.iterations = LHtracker()
         self.iterations.sensors_nb_recovered = 4
         self.iterations.id_first_sensor = 0
@@ -78,8 +77,6 @@ class LH_tracker_geometry(Node):
 
         self.get_logger().info("lh_tracker_geometry node is ready")
         self.tracker_pose = Point()
-        # self.loop()#[ 58.00686257, 148.00825208, 119.26042336,  29.46566866 ]
-        # self.find_intrinsic_lh_parameters()
 
     def find_intrinsic_lh_parameters(self):
         initial_intrinsic_parameters = np.array(
@@ -106,7 +103,6 @@ class LH_tracker_geometry(Node):
                 start_angle=initial_intrinsic_parameters[3],
             )
 
-        # self.get_logger().info(f"initial_intrinsic_parameters error: {initial_intrinsic_parameters}")
         self.saved_iteration_list = LHtracker()
         self.global_index = 0
         self.calibration_done = False
@@ -186,7 +182,6 @@ class LH_tracker_geometry(Node):
         )
         errors.append(error(0.45, 1.5, self.tracker_pose.x, self.tracker_pose.y))
 
-        # self.get_logger().info(f"tracker_pose x: {self.tracker_pose.x}, y:{self.tracker_pose.y}, theta:{np.rad2deg(self.tracker_pose.z)}")
         avg_error = 0.0
         errors_to_show = []
         for i in range(len(errors)):
@@ -207,7 +202,6 @@ class LH_tracker_geometry(Node):
     def calibration_process_top(self):
         i = 0
         while self.calibration_done != True:
-            # rd = random.randint(0, len(csts.calibration_iterations) - 1)
             self.iterations.first_sensor_first_iteration = csts.calibration_iterations[
                 i
             ][0]
@@ -591,7 +585,6 @@ class LH_tracker_geometry(Node):
 
     def calibration_process(self, msg):
         if msg.sensors_nb_recovered > 3 and self.global_index < self.avg_nb:
-            # self.get_logger().info(f"[{msg.first_sensor_first_iteration}, {msg.first_sensor_second_iteration}, {msg.second_sensor_first_iteration}, {msg.second_sensor_second_iteration}, {msg.third_sensor_first_iteration}, {msg.third_sensor_second_iteration}, {msg.fourth_sensor_first_iteration}, {msg.fourth_sensor_second_iteration}],")
             self.global_index += 1
             self.saved_iteration_list.first_sensor_first_iteration += (
                 msg.first_sensor_first_iteration
@@ -684,12 +677,10 @@ class LH_tracker_geometry(Node):
             if previous_final_tf.transform.translation.x != 0:
                 kdl_previous_final_tf = transform_to_kdl(previous_final_tf)
                 kdl_final_tf = transform_to_kdl(self.final_tf)
-                # self.get_logger().info(f"translation diff: x:{(kdl_previous_final_tf.p.x()-kdl_final_tf.p.x())*100}, y:{(kdl_previous_final_tf.p.y()-kdl_final_tf.p.y())*100}, z:{(kdl_previous_final_tf.p.z()-kdl_final_tf.p.z())*100}")
 
                 rot_previous_final_tf = kdl_previous_final_tf.M.GetEulerZYX()
                 rot_final_tf = kdl_final_tf.M.GetEulerZYX()
 
-                # self.get_logger().info(f"rotation diff: z:{float((rot_previous_final_tf[0] - rot_final_tf[0]))*180/np.pi}, y:{(rot_previous_final_tf[1] - rot_final_tf[1])*180/np.pi}, x:{(rot_previous_final_tf[2] - rot_final_tf[2])*180/np.pi}")
             else:
                 self.saved_iteration_list = LHtracker()
                 self.global_index = 0
