@@ -5,4 +5,8 @@
 .vscode/ipch
 __pycache__/
 *.pyc
+*ros2_node/build/*
+*ros2_node/install/*
+*ros2_node/log/*
+*lfsr/test*
 *geometrical_tests/ootx_data*
