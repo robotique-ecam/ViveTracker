@@ -3,6 +3,7 @@ This is our solution for [Valve lighthouse 2.0](https://www.vive.com/fr/accessor
 Some documentation can be found in the changelog section below.
 
 # Changelog
+- µROS enemy tracker https://github.com/robotique-ecam/ViveTracker/pull/19
 - ROS2 package + geometry refinement https://github.com/robotique-ecam/ViveTracker/pull/18
 - FPGA 8 sensors strategy https://github.com/robotique-ecam/ViveTracker/pull/17
 - LH2 geometry https://github.com/robotique-ecam/ViveTracker/pull/16
