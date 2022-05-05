@@ -14,8 +14,9 @@ module ram_decoded (
   );
 
 parameter dump_ticks = 96000; //1ms in a 96MHz clock
+parameter max_block_nb = 20;
 
-reg [40:0] ram [195:0]; //196 blocks of 41 bits
+reg [40:0] ram [max_block_nb-1:0]; //max_block_nb blocks of 41 bits
 
 // first machine: storing data
 
@@ -68,7 +69,7 @@ always @ (posedge clk_96MHz) begin
     end
 
     STORE: begin
-      if (avl_blocks_nb < 196) begin
+      if (avl_blocks_nb < max_block_nb) begin
         ram[avl_blocks_nb] <= block_to_store;
         avl_blocks_nb <= avl_blocks_nb + 1;
       end

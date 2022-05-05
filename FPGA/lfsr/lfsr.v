@@ -21,13 +21,13 @@ always @ (posedge clk_72MHz) begin
   case (state)
     IDLE: begin
       if (enable == 1) begin
+        iteration_number <= 0;
         state <= LOAD;
       end
     end
 
     LOAD: begin
       value <= start_data;
-      iteration_number <= 0;
       state <= ITERATE;
     end
 

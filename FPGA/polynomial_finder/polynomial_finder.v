@@ -14,6 +14,7 @@ module polynomial_finder (
   );
 
 parameter iteration_approx = 2;
+parameter lfsr_loading_cycle = 4;
 
 localparam  IDLE = 0;
 localparam  ESTIMATE_ITERATION = 1;
@@ -24,6 +25,8 @@ localparam  WAIT_FOR_RESET = 4;
 reg [2:0] state = IDLE;
 
 reg enable_LFSRs = 0;
+
+reg [1:0] timer_loading_cycle = 0;
 
 wire [16:0] value_1D258, value_17E04;
 wire [16:0] iteration_number_1D258, iteration_number_17E04;
@@ -47,6 +50,14 @@ lfsr lfsr2(
   );
 
 reg [16:0] estimated_iteration; //17 bits is for security but it's way to much
+
+always @ (posedge clk_72MHz) begin
+  if (enable_LFSRs && !(&timer_loading_cycle)) begin
+    timer_loading_cycle <= timer_loading_cycle + 1;
+  end else if (!enable_LFSRs) begin
+    timer_loading_cycle <= 0;
+  end
+end
 
 always @ (posedge clk_72MHz) begin
   case (state)
@@ -78,7 +89,7 @@ always @ (posedge clk_72MHz) begin
       enable_LFSRs <= 1;
       if (~enable) begin
         state <= WAIT_FOR_RESET;
-      end else if (iteration_number_1D258 > (estimated_iteration - iteration_approx - 1)) begin
+      end else if (iteration_number_1D258 > (estimated_iteration - iteration_approx - 1) && &timer_loading_cycle) begin
         state <= IDENTIFY_POLYNOMIAL;
       end
     end
