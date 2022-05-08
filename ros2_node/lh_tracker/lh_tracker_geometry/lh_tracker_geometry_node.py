@@ -397,39 +397,44 @@ class LH_tracker_geometry(Node):
         recovered_pairs = self.identify_pairs(sensors_id_list)
         avg_nb = 0
         self.tracker_pose = Point()
+        cos_sin_angles = [0.0, 0.0]
 
         if self.possible_pairs[0] in recovered_pairs:
             x, y, theta = self.localisation_zero_first(sensors_id_list)
             self.tracker_pose.x += x
             self.tracker_pose.y += y
-            self.tracker_pose.z += theta if theta > 0 else theta + 2 * np.pi
+            cos_sin_angles[0] += np.cos(theta)
+            cos_sin_angles[1] += np.sin(theta)
             avg_nb += 1
 
         if self.possible_pairs[1] in recovered_pairs:
             x, y, theta = self.localisation_second_third(sensors_id_list)
             self.tracker_pose.x += x
             self.tracker_pose.y += y
-            self.tracker_pose.z += theta if theta > 0 else theta + 2 * np.pi
+            cos_sin_angles[0] += np.cos(theta)
+            cos_sin_angles[1] += np.sin(theta)
             avg_nb += 1
 
         if self.possible_pairs[2] in recovered_pairs:
             x, y, theta = self.localisation_fourth_fifth(sensors_id_list)
             self.tracker_pose.x += x
             self.tracker_pose.y += y
-            self.tracker_pose.z += theta if theta > 0 else theta + 2 * np.pi
+            cos_sin_angles[0] += np.cos(theta)
+            cos_sin_angles[1] += np.sin(theta)
             avg_nb += 1
 
         if self.possible_pairs[3] in recovered_pairs:
             x, y, theta = self.localisation_sixth_seventh(sensors_id_list)
             self.tracker_pose.x += x
             self.tracker_pose.y += y
-            self.tracker_pose.z += theta if theta > 0 else theta + 2 * np.pi
+            cos_sin_angles[0] += np.cos(theta)
+            cos_sin_angles[1] += np.sin(theta)
             avg_nb += 1
 
         if avg_nb != 0:
             self.tracker_pose.x = self.tracker_pose.x / avg_nb
             self.tracker_pose.y = self.tracker_pose.y / avg_nb
-            self.tracker_pose.z = self.tracker_pose.z / avg_nb
+            self.tracker_pose.z = np.arctan2(cos_sin_angles[1], cos_sin_angles[0])
 
             self.marker_estimated_pose.pose.position.x = self.tracker_pose.x
             self.marker_estimated_pose.pose.position.y = self.tracker_pose.y
