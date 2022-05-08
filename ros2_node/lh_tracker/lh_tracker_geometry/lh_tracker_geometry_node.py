@@ -310,11 +310,9 @@ class LH_tracker_geometry(Node):
             self.sensors_est_position.points[-1].z = self.sensor_height
 
     def lh_sub_callback(self, msg):
-        if self.inial_skip_nb < self.inial_nb_to_skip:
-            self.inial_skip_nb += 1
-        elif not self.calibration_done:
+        if not self.calibration_done and msg.sensors_nb_recovered == 8:
             self.calibration_process(msg)
-        else:
+        elif self.calibration_done and msg.sensors_nb_recovered != 8:
             self.nominal_localisation(msg)
 
     def nominal_localisation(self, msg):
